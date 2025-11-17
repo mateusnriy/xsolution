@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" stylesheets="@style/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER" layoutX="182.0" layoutY="52.0" prefHeight="168.0" prefWidth="235.0" spacing="5.0" styleClass="card">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" styleClass="label-subheader" text="Login" textAlignment="CENTER" />
+            <Label alignment="BOTTOM_LEFT" text="E-mail">
+               <VBox.margin>
+                  <Insets right="150.0" />
+               </VBox.margin>
+            </Label>
+            <TextField id="emailField" fx:id="emailField" />
+            <Label alignment="BOTTOM_LEFT" text="Senha">
+               <VBox.margin>
+                  <Insets right="150.0" />
+               </VBox.margin>
+            </Label>
+            <PasswordField id="senhaField" fx:id="senhaField" />
+            <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" prefHeight="34.0" prefWidth="110.0" text="Entrar">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Hyperlink fx:id="recoverLink" onAction="#handleRecover" text="Esqueci minha senha">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Hyperlink>
+            <Hyperlink fx:id="recoverLink" onAction="#handleCreate" text="Cadastre-se" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
