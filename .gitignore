@@ -1,12 +1,21 @@
-# Ignorar a pasta de build do Maven 
+# --- Maven e Compilação ---
 target/
+dependency-reduced-pom.xml
 
-# Ignorar arquivos de IDE e sistema
+# --- IDEs e Editores ---
 .vscode/
 .idea/
 *.iml
+.classpath
+.project
+.settings/
+bin/
+
+# --- Sistema Operacional ---
 .DS_Store
 Thumbs.db
+Desktop.ini
 
-# Ignorar logs
+# --- Logs e Outros ---
 *.log
+.github/
