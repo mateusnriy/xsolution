@@ -19,3 +19,4 @@ Desktop.ini
 # --- Logs e Outros ---
 *.log
 .github/
+.env
