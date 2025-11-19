@@ -7,7 +7,7 @@ import xsolution.model.enums.StatusUsuario;
 
 public abstract class Usuario {
 
-    private Integer id;
+    private String id;
     private String nome;
     private String email;
     private String senhaHash;
@@ -17,7 +17,7 @@ public abstract class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Integer id, String nome, String email, String senhaHash, PerfilUsuario perfil,
+    public Usuario(String id, String nome, String email, String senhaHash, PerfilUsuario perfil,
             StatusUsuario status) {
         this.id = id;
         this.nome = nome;
@@ -27,11 +27,11 @@ public abstract class Usuario {
         this.status = status;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -98,7 +98,9 @@ public abstract class Usuario {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
+
         Usuario usuario = (Usuario) o;
+
         return Objects.equals(id, usuario.id);
     }
 

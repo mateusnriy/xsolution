@@ -9,8 +9,8 @@ public class Tecnico extends Usuario {
         this.perfil = PerfilUsuario.TECNICO;
     }
 
-    public Tecnico(Integer id, String nome, String email, String senha, StatusUsuario status) {
+    public Tecnico(String id, String nome, String email, String senha, StatusUsuario status) {
         super(id, nome, email, senha, PerfilUsuario.TECNICO, status);
     }
-    
+
 }

@@ -1,7 +1,7 @@
 package xsolution.model.enums;
 
 public enum TipoSetor {
-    SECRETARIA,
+	SECRETARIA,
 	OUVIDORIA,
 	GOVERNACA,
 	DAIN,

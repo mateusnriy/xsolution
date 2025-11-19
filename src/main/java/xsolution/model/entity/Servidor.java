@@ -11,12 +11,17 @@ public class Servidor extends Usuario {
         this.perfil = PerfilUsuario.COMUM;
     }
 
-    public Servidor(Integer id, String nome, String email, String senha, String lotacao, StatusUsuario status) {
+    public Servidor(String id, String nome, String email, String senha, String lotacao, StatusUsuario status) {
         super(id, nome, email, senha, PerfilUsuario.COMUM, status);
         this.lotacao = lotacao;
     }
 
-    public String getLotacao() { return lotacao;}
-    public void setLotacao(String lotacao) { this.lotacao = lotacao;}
+    public String getLotacao() {
+        return lotacao;
+    }
+
+    public void setLotacao(String lotacao) {
+        this.lotacao = lotacao;
+    }
 
 }

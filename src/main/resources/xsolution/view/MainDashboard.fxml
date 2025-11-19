@@ -10,7 +10,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" 
+   stylesheets="xsolution/view/style.css" 
+   xmlns="http://javafx.com/javafx/21" 
+   xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="xsolution.controller.MainDashboardController">
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="545.0" prefWidth="245.0" style="-fx-background-color: WHITE; -fx-spacing: 20;" BorderPane.alignment="CENTER">
          <children>

@@ -9,7 +9,7 @@ public class Administrador extends Usuario {
         this.perfil = PerfilUsuario.ADMINISTRADOR;
     }
 
-    public Administrador(Integer id, String nome, String email, String senhaHash, StatusUsuario status) {
+    public Administrador(String id, String nome, String email, String senhaHash, StatusUsuario status) {
         super(id, nome, email, senhaHash, PerfilUsuario.ADMINISTRADOR, status);
     }
 
@@ -20,5 +20,5 @@ public class Administrador extends Usuario {
     public void ativarUsuario(Usuario usuario) {
         usuario.setStatus(StatusUsuario.ATIVO);
     }
-    
+
 }

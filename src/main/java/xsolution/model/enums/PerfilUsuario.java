@@ -1,7 +1,7 @@
 package xsolution.model.enums;
 
 public enum PerfilUsuario {
-    ADMINISTRADOR,
+	ADMINISTRADOR,
 	TECNICO,
 	COMUM
 }
