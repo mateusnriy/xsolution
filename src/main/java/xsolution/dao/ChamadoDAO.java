@@ -16,7 +16,7 @@ import xsolution.model.entity.Servidor;
 import xsolution.model.entity.Tecnico;
 import xsolution.model.enums.StatusChamado;
 import xsolution.model.enums.TipoEquipamento;
-import xsolution.util.ConnectionFactory;
+import xsolution.db.DB;
 
 public class ChamadoDAO {
 
@@ -25,7 +25,7 @@ public class ChamadoDAO {
 
         String sql = "INSERT INTO Chamado (protocolo, titulo, descricao, status, dataAbertura, idUsuarioCriador, idEquipamento) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = DB.getConnection();
              // RETURN_GENERATED_KEYS é crucial para obter o ID gerado pelo banco
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -76,7 +76,7 @@ public class ChamadoDAO {
                 "LEFT JOIN Equipamento e ON c.idEquipamento = e.idEquipamento " +
                 "ORDER BY c.dataAbertura DESC";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -102,7 +102,7 @@ public class ChamadoDAO {
                 "LEFT JOIN Equipamento e ON c.idEquipamento = e.idEquipamento " +
                 "WHERE c.idChamado = ?";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setInt(1, id);
@@ -120,7 +120,7 @@ public class ChamadoDAO {
     public void update(Chamado chamado) {
         String sql = "UPDATE Chamado SET status = ?, idUsuarioResponsavel = ?, dataFechamento = ? WHERE idChamado = ?";
         
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, chamado.getStatus().toString());

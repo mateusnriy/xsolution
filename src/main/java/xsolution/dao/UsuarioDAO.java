@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import xsolution.db.DB;
 import xsolution.model.entity.Tecnico;
 import xsolution.model.entity.Usuario;
 import xsolution.model.enums.PerfilUsuario;
 import xsolution.model.enums.StatusUsuario;
-import xsolution.util.ConnectionFactory;
 
 public class UsuarioDAO {
 
@@ -20,7 +20,7 @@ public class UsuarioDAO {
         List<Usuario> tecnicos = new ArrayList<>();
         String sql = "SELECT * FROM Usuario WHERE perfil = 'TECNICO' AND status = 'ATIVO'";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 

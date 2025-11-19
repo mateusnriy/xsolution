@@ -7,7 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import xsolution.util.ConnectionFactory;
+import xsolution.db.DB;
 
 public class Main extends Application {
 
@@ -33,7 +33,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         System.out.println("Testando conexão com banco...");
-        Connection conn = ConnectionFactory.getConnection();
+        Connection conn = DB.getConnection();
         if (conn != null) {
             System.out.println("Conexao OK! Iniciando JavaFX...");
             launch(args);

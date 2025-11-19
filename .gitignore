@@ -20,3 +20,4 @@ Desktop.ini
 *.log
 .github/
 .env
+DB.java
