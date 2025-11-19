@@ -2,64 +2,59 @@ package xsolution.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
-import io.github.cdimascio.dotenv.Dotenv;
-import xsolution.exception.DbException;
-
 public class DB {
-  private static Connection conn = null;
+    private static final String URL = "jdbc:postgresql://localhost:5432/xsolution_db";
+    private static final String USER = "xsolution_admin";
+    private static final String PASSWORD = "M1nhaS3nhaF0rte!#";
 
-  public static Connection getConnection() {
-    if (conn == null) {
-      try {
-        Dotenv dotenv = Dotenv.load();
-        String dbUrl = dotenv.get("DB_URL");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-
-        if (dbUrl == null || dbUser == null || dbPassword == null) {
-          throw new DbException("Variáveis de ambiente (DB_URL, DB_USER, DB_PASSWORD) não encontradas no .env");
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-      } catch (SQLException e) {
-        throw new DbException("Erro ao conectar ao banco de dados: " + e.getMessage(), e);
-      }
     }
 
-    return conn;
-  }
-
-  public static void closeConnection() {
-    if (conn != null) {
-      try {
-        conn.close();
-      } catch (SQLException e) {
-        throw new DbException("Erro ao fechar conexão" + e.getMessage(), e);
-      }
+    public static void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                // ignore
+            }
+        }
     }
-  }
 
-  public static void closeStatement(Statement st) {
-    if (st != null) {
-      try {
-        st.close();
-      } catch (SQLException e) {
-        throw new DbException("Erro ao fechar o Statement: " + e.getMessage(), e);
-      }
+    /**
+     * Compatibilidade: método sem argumentos chamado por Main.stop().
+     * Não temos uma conexão global gerenciada aqui, portanto apenas ignora.
+     */
+    public static void closeConnection() {
+        // Nenhuma ação necessária — conexões devem ser fechadas pelos proprietários.
     }
-  }
 
-  public static void closeResults(ResultSet rs) {
-    if (rs != null) {
-      try {
-        rs.close();
-      } catch (SQLException e) {
-        throw new DbException("Erro ao fechar o ResultSet: " + e.getMessage(), e);
-      }
+    public static void closeStatement(Statement st) {
+        if (st != null) {
+            try {
+                st.close();
+            } catch (SQLException e) {
+                // ignore
+            }
+        }
     }
-  }
+
+    public static void closeResults(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                // ignore
+            }
+        }
+    }
 }

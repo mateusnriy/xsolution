@@ -10,18 +10,13 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" 
-   stylesheets="xsolution/view/style.css" 
-   xmlns="http://javafx.com/javafx/21" 
-   xmlns:fx="http://javafx.com/fxml/1"
-   fx:controller="xsolution.controller.MainDashboardController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="xsolution.controller.MainDashboardController">
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="545.0" prefWidth="245.0" style="-fx-background-color: WHITE; -fx-spacing: 20;" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="navAbrirChamadosButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-button" text="Abrir Chamado" />
             <Button fx:id="navMeusChamadosButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-button" text="Meus Chamados" />
-            <Button fx:id="navGestaoChamadosButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-button" text="Gestão de Chamados" />
-            <Button fx:id="navGestaoEquipamentosButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-button" text="Gestão de Equipamentos" />
+            <Button fx:id="navGestaoChamadosButton" mnemonicParsing="false" onAction="#handleNavGestaoChamados" prefHeight="40.0" prefWidth="200.0" styleClass="nav-button" text="Gestão de Chamados" />
             <Button fx:id="navGestaoUsuariosButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-button" text="Gestão de Usuários" />
             <Button fx:id="navMeuPerfilButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-button" text="Meu Perfil">
                <VBox.margin>
@@ -31,7 +26,8 @@
             <Button fx:id="navLogoutButton" mnemonicParsing="false" onAction="#handleLogout" prefHeight="33.0" prefWidth="200.0" styleClass="button-danger" text="Sair">
                <VBox.margin>
                   <Insets />
-               </VBox.margin></Button>
+               </VBox.margin>
+            </Button>
          </children>
          <padding>
             <Insets top="15.0" />

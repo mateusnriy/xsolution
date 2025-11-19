@@ -1,9 +1,13 @@
 package xsolution.controller;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,7 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import xsolution.utils.AlertUtils;
 
-public class MainDashboardController {
+public class MainDashboardController implements Initializable {
 
   @FXML
   private StackPane contentArea;
@@ -29,12 +33,41 @@ public class MainDashboardController {
   @FXML
   private Button navLogoutButton;
 
-  // @FXML
-  // public void initialize() {
-  // System.out.println("Dashboard inicializado.");
-  // }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Inicialização opcional: carregar uma tela padrão
+    // carregarTela("/xsolution/view/GestaoChamados.fxml");
+  }
+
+  // Método auxiliar para trocar o conteúdo do centro
+  private void carregarTela(String fxmlPath) {
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+      Parent view = loader.load();
+      contentArea.getChildren().setAll(view);
+    } catch (IOException e) {
+      AlertUtils.showError("Erro de Navegação", "Não foi possível carregar a tela: " + fxmlPath + "\n" + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
   @FXML
-  private void handleLogout(ActionEvent event) {
+  public void handleNavGestaoChamados(ActionEvent event) {
+    carregarTela("/xsolution/view/GestaoChamados.fxml");
+  }
+
+  @FXML
+  public void handleNavAbrirChamados(ActionEvent event) {
+    // carregarTela("/xsolution/view/AbrirChamado.fxml");
+  }
+
+  @FXML
+  public void handleNavMeusChamados(ActionEvent event) {
+    // carregarTela("/xsolution/view/MeusChamados.fxml");
+  }
+
+  @FXML
+  public void handleLogout(ActionEvent event) {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
       Parent root = loader.load();
