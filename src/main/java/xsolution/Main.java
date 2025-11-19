@@ -1,34 +1,41 @@
 package xsolution;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.io.IOException;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import xsolution.db.DB;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
-public class Main {
-    public static void main(String[] args) {
-
-        Dotenv dotenv = Dotenv.load();
-
-        String dbUrl = dotenv.get("DB_URL");
-        String dbUser = dotenv.get("DB_USER");
-        String dbPassword = dotenv.get("DB_PASSWORD");
-
-        if (dbUser == null || dbPassword == null) {
-            System.err.println("Erro: As variáveis de ambiente DB_USER e DB_PASSWORD não foram definidas.");
-            return;
-        }
-
+public class Main extends Application {
+    @Override
+    public void start(Stage primaryStage) {
         try {
-            Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-            if (conn != null) {
-                System.out.println("Conectado ao banco de dados com sucesso!");
-            } else {
-                System.out.println("Falha na conexão!");
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro de SQL: " + e.getMessage());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+
+            primaryStage.setTitle("X Solution - Login");
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(true);
+            primaryStage.setMaximized(true);
+            primaryStage.show();
+
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar FXML da tela de Login:");
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Fechando a aplicação e a conexão com o banco...");
+        DB.closeConnection();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
