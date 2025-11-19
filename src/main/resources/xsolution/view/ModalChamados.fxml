@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" alignment="TOP_LEFT" prefWidth="400" prefHeight="500" 
+      styleClass="card" stylesheets="@style.css"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="xsolution.controller.DetalhesChamadoController">
+
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <Label text="Detalhes do Chamado" styleClass="label-header"/>
+
+    <Label text="Protocolo:" styleClass="label-subheader"/>
+    <TextField fx:id="txtProtocolo" editable="false" style="-fx-background-color: #eee;"/>
+
+    <Label text="Título:" styleClass="label-subheader"/>
+    <TextField fx:id="txtTitulo" editable="false"/>
+
+    <Label text="Descrição:" styleClass="label-subheader"/>
+    <TextArea fx:id="txtDescricao" editable="false" wrapText="true" prefHeight="80"/>
+
+    <Separator/>
+
+    <Label text="Status (Ciclo de Vida):" styleClass="label-subheader"/>
+    <ComboBox fx:id="cbStatus" prefWidth="400"/>
+
+    <Label text="Técnico Responsável:" styleClass="label-subheader"/>
+    <ComboBox fx:id="cbTecnico" prefWidth="400"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancelar" onAction="#handleCancelar"/>
+        <Button text="Salvar Alterações" onAction="#handleSalvar" styleClass="button"/>
+    </HBox>
+</VBox>
