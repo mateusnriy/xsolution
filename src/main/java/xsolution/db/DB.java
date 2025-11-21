@@ -13,9 +13,6 @@ public class DB {
 
     private static Connection conn = null;
 
-    /**
-     * Carrega as propriedades do arquivo db.properties
-     */
     private static Properties loadProperties() {
         try (InputStream input = DB.class.getClassLoader().getResourceAsStream("db.properties")) {
             Properties props = new Properties();
@@ -30,26 +27,28 @@ public class DB {
         }
     }
 
-    /**
-     * Obtém uma NOVA conexão com o banco de dados.
-     */
     public static Connection getConnection() {
         Properties props = loadProperties();
-        
-        if (props == null) {
+
+        if (props == null)
+            return null;
+
+        String dbUrl = props.getProperty("db.url");
+        String dbUser = props.getProperty("db.user");
+        String dbPass = props.getProperty("db.password");
+
+        if (dbUrl == null || dbUser == null || dbPass == null) {
+            System.err.println("ERRO: As chaves db.url, db.user ou db.password não foram encontradas no db.properties");
             return null;
         }
 
-        // Extrai e limpa aspas extras caso existam (proteção contra erro comum)
-        String url = props.getProperty("db.url").replace("\"", "").trim();
-        String user = props.getProperty("db.user").replace("\"", "").trim();
-        String pass = props.getProperty("db.password").replace("\"", "").trim();
+        String url = dbUrl.replace("\"", "").trim();
+        String user = dbUser.replace("\"", "").trim();
+        String pass = dbPass.replace("\"", "").trim();
 
         try {
-            // 1. Forçar o carregamento do Driver (Essencial em alguns ambientes JavaFX)
             Class.forName("org.postgresql.Driver");
 
-            // 2. Conectar passando user e pass explicitamente
             return DriverManager.getConnection(url, user, pass);
 
         } catch (ClassNotFoundException e) {
@@ -66,7 +65,7 @@ public class DB {
     public static void closeConnection() {
         closeConnection(conn);
     }
-    
+
     public static void closeConnection(Connection conn) {
         if (conn != null) {
             try {
