@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -26,109 +28,67 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage; // Importação corrigida
+import javafx.stage.Stage;
 import xsolution.model.entity.Chamado;
 import xsolution.model.enums.StatusChamado;
 import xsolution.service.ChamadoService;
-import xsolution.util.AlertUtils;
+import xsolution.utils.AlertUtils;
 
 public class GestaoChamadosController implements Initializable {
 
-    // --- Componentes da Tela ---
     @FXML private TextField filterProtocolo;
     @FXML private ComboBox<StatusChamado> filterStatus;
     @FXML private DatePicker filterDataInicio;
     @FXML private TableView<Chamado> chamadosTable;
+    @FXML private Button btnFiltrar;
+    @FXML private Button btnLimparFiltros;
     @FXML private Button btnRelatorio;
-    
-    // --- Colunas da Tabela ---
     @FXML private TableColumn<Chamado, String> colProtocolo;
     @FXML private TableColumn<Chamado, String> colTitulo;
     @FXML private TableColumn<Chamado, String> colStatus;
     @FXML private TableColumn<Chamado, String> colSolicitante;
     @FXML private TableColumn<Chamado, String> colTecnico;
     @FXML private TableColumn<Chamado, String> colDataAbertura;
-
-    // --- Dependências ---
+    
     private ChamadoService chamadoService;
-    private ObservableList<Chamado> listaChamados; 
+    private ObservableList<Chamado> listaChamados; // Lista exibida na tabela
+    private List<Chamado> todosOsChamadosCache;    // Cache para filtro
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         this.chamadoService = new ChamadoService();
         this.listaChamados = FXCollections.observableArrayList();
+        this.todosOsChamadosCache = new ArrayList<>();
 
         configurarTabela();
         configurarFiltros();
         carregarDados();
 
-        // Evento de duplo clique
         chamadosTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && chamadosTable.getSelectionModel().getSelectedItem() != null) {
-                abrirChamado(chamadosTable.getSelectionModel().getSelectedItem());
+                abrirDetalhes(chamadosTable.getSelectionModel().getSelectedItem());
             }
         });
     }
 
-    private void abrirChamado(Chamado chamadoSelecionado) {
+    private void carregarDados() {
         try {
-            // CORREÇÃO: Caminho aponta para ModalChamados.fxml (plural, conforme seu arquivo)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/ModalChamados.fxml"));
-            Parent root = loader.load();
+            List<Chamado> dadosBanco = chamadoService.listarTodos();
+            
 
-            // CORREÇÃO: Usa a classe correta DetalhesChamadoController
-            DetalhesChamadoController controller = loader.getController();
-            controller.setChamado(chamadoSelecionado);
-
-            Stage stage = new Stage();
-            stage.setTitle("Editar Chamado - " + chamadoSelecionado.getProtocolo());
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL); 
-            stage.showAndWait(); 
-
-            if (controller.isSalvou()) {
-                carregarDados(); // Recarrega a tabela se houve salvamento
-            }
-
-        } catch (IOException e) {
-            AlertUtils.showError("Erro", "Falha ao abrir detalhes: " + e.getMessage());
+            this.todosOsChamadosCache.clear();
+            this.todosOsChamadosCache.addAll(dadosBanco);
+            listaChamados.setAll(dadosBanco);
+            
+        } catch (Exception e) {
+            AlertUtils.showError("Erro ao carregar dados", e.getMessage());
             e.printStackTrace();
-        }
-    }
-    
-    @FXML
-    public void handleGerarRelatorio() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Salvar Relatório");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivos CSV", "*.csv"));
-        fileChooser.setInitialFileName("relatorio_chamados.csv");
-        
-        File file = fileChooser.showSaveDialog(chamadosTable.getScene().getWindow());
-        
-        if (file != null) {
-            try (PrintWriter writer = new PrintWriter(file)) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Protocolo;Titulo;Status;Data Abertura;Solicitante;Tecnico\n");
-
-                for (Chamado c : chamadosTable.getItems()) {
-                    sb.append(c.getProtocolo()).append(";");
-                    sb.append(c.getTitulo()).append(";");
-                    sb.append(c.getStatus()).append(";");
-                    sb.append(c.getDataAbertura()).append(";");
-                    sb.append(c.getSolicitante() != null ? c.getSolicitante().getNome() : "").append(";");
-                    sb.append(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "").append("\n");
-                }
-                
-                writer.write(sb.toString());
-                AlertUtils.showInfo("Sucesso", "Relatório gerado com sucesso!");
-                
-            } catch (Exception e) {
-                AlertUtils.showError("Erro", "Falha ao gerar relatório: " + e.getMessage());
-            }
         }
     }
 
     private void configurarTabela() {
+
         colProtocolo.setCellValueFactory(new PropertyValueFactory<>("protocolo"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
 
@@ -166,36 +126,51 @@ public class GestaoChamadosController implements Initializable {
         filterStatus.setItems(FXCollections.observableArrayList(StatusChamado.values()));
     }
 
-    private void carregarDados() {
-        try {
-            List<Chamado> dadosBanco = chamadoService.listarTodos();
-            listaChamados.clear();
-            listaChamados.addAll(dadosBanco);
-        } catch (Exception e) {
-            AlertUtils.showError("Erro ao carregar dados", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     @FXML
     public void handleFilter() {
         try {
-            List<Chamado> todos = chamadoService.listarTodos();
-            List<Chamado> filtrados = todos.stream()
+
+            if (todosOsChamadosCache.isEmpty()) {
+                carregarDados();
+            }
+
+            List<Chamado> filtrados = todosOsChamadosCache.stream()
                 .filter(c -> {
-                    if (filterProtocolo.getText() != null && !filterProtocolo.getText().isEmpty()) {
-                        if (!c.getProtocolo().toLowerCase().contains(filterProtocolo.getText().toLowerCase())) 
+                    if (filterProtocolo.getText() != null && !filterProtocolo.getText().trim().isEmpty()) {
+                        String filtroTexto = filterProtocolo.getText().toLowerCase().trim();
+                        String protocoloChamado = c.getProtocolo() != null ? c.getProtocolo().toLowerCase() : "";
+                        
+                        if (!protocoloChamado.contains(filtroTexto)) {
                             return false;
+                        }
                     }
+                    
                     if (filterStatus.getValue() != null) {
-                        if (c.getStatus() != filterStatus.getValue()) return false;
+                        if (c.getStatus() != filterStatus.getValue()) {
+                            return false;
+                        }
+                    }
+                    
+                    if (filterDataInicio.getValue() != null) {
+                        LocalDate dataFiltro = filterDataInicio.getValue();
+                        if (c.getDataAbertura() != null) {
+                            if (!c.getDataAbertura().toLocalDate().equals(dataFiltro)) {
+                                return false;
+                            }
+                        } else {
+                            return false; 
+                        }
                     }
                     return true;
                 })
                 .collect(Collectors.toList());
 
-            listaChamados.clear();
-            listaChamados.addAll(filtrados);
+            listaChamados.setAll(filtrados);
+            
+            if (filtrados.isEmpty()) {
+                AlertUtils.showInfo("Filtro", "Nenhum chamado encontrado com esses critérios.");
+            }
+
         } catch (Exception e) {
             AlertUtils.showError("Erro ao filtrar", e.getMessage());
         }
@@ -205,7 +180,66 @@ public class GestaoChamadosController implements Initializable {
     public void handleLimparFiltros() {
         filterProtocolo.clear();
         filterStatus.getSelectionModel().clearSelection();
+        filterStatus.setValue(null);
         filterDataInicio.setValue(null);
-        carregarDados();
+        listaChamados.setAll(todosOsChamadosCache);
+    }
+
+    private void abrirDetalhes(Chamado chamadoSelecionado) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/ModalChamados.fxml"));
+            Parent root = loader.load();
+
+            DetalhesChamadoController controller = loader.getController();
+            
+            controller.setChamado(chamadoSelecionado);
+
+            Stage stage = new Stage();
+            stage.setTitle("Editar Chamado - " + chamadoSelecionado.getProtocolo());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL); 
+            stage.showAndWait(); 
+
+            if (controller.isSalvou()) {
+                carregarDados();
+            }
+
+        } catch (IOException e) {
+            AlertUtils.showError("Erro", "Falha ao abrir detalhes: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void handleGerarRelatorio() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Salvar Relatório");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivos CSV", "*.csv"));
+        fileChooser.setInitialFileName("relatorio_chamados_" + LocalDate.now() + ".csv");
+        
+        File file = fileChooser.showSaveDialog(chamadosTable.getScene().getWindow());
+        
+        if (file != null) {
+            try (PrintWriter writer = new PrintWriter(file)) {
+                StringBuilder sb = new StringBuilder();
+
+                sb.append("Protocolo;Titulo;Status;Data Abertura;Solicitante;Tecnico\n");
+
+                for (Chamado c : chamadosTable.getItems()) {
+                    sb.append(c.getProtocolo()).append(";");
+                    sb.append(c.getTitulo()).append(";");
+                    sb.append(c.getStatus()).append(";");
+                    sb.append(c.getDataAbertura()).append(";");
+                    sb.append(c.getSolicitante() != null ? c.getSolicitante().getNome() : "N/A").append(";");
+                    sb.append(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "Pendente").append("\n");
+                }
+                
+                writer.write(sb.toString());
+                AlertUtils.showInfo("Sucesso", "Relatório salvo em: " + file.getAbsolutePath());
+                
+            } catch (Exception e) {
+                AlertUtils.showError("Erro", "Falha ao gerar relatório: " + e.getMessage());
+            }
+        }
     }
 }

@@ -15,73 +15,70 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import xsolution.utils.AlertUtils;
+import xsolution.utils.Sessao;
 
 public class MainDashboardController implements Initializable {
 
-  @FXML
-  private StackPane contentArea;
+    @FXML
+    private StackPane contentArea;
 
-  @FXML
-  private Button navAbrirChamadosButton;
+    @FXML
+    private Button navAbrirChamadosButton;
 
-  @FXML
-  private Button navMeusChamadosButton;
+    @FXML
+    private Button navMeusChamadosButton;
 
-  @FXML
-  private Button navGestaoChamadosButton;
+    @FXML
+    private Button navGestaoChamadosButton;
 
-  @FXML
-  private Button navLogoutButton;
+    @FXML
+    private Button navLogoutButton;
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Inicialização opcional: carregar uma tela padrão
-    // carregarTela("/xsolution/view/GestaoChamados.fxml");
-  }
-
-  // Método auxiliar para trocar o conteúdo do centro
-  private void carregarTela(String fxmlPath) {
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-      Parent view = loader.load();
-      contentArea.getChildren().setAll(view);
-    } catch (IOException e) {
-      AlertUtils.showError("Erro de Navegação", "Não foi possível carregar a tela: " + fxmlPath + "\n" + e.getMessage());
-      e.printStackTrace();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        if (Sessao.getUsuarioLogado() == null) {
+            System.out.println("ALERTA: Nenhum usuário na sessão. Redirecionando para login seria o ideal.");
+        }
     }
-  }
 
-  @FXML
-  public void handleNavGestaoChamados(ActionEvent event) {
-    carregarTela("/xsolution/view/GestaoChamados.fxml");
-  }
-
-  @FXML
-  public void handleNavAbrirChamados(ActionEvent event) {
-    // carregarTela("/xsolution/view/AbrirChamado.fxml");
-  }
-
-  @FXML
-  public void handleNavMeusChamados(ActionEvent event) {
-    // carregarTela("/xsolution/view/MeusChamados.fxml");
-  }
-
-  @FXML
-  public void handleLogout(ActionEvent event) {
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
-      Parent root = loader.load();
-      Scene scene = new Scene(root);
-
-      Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-      stage.setScene(scene);
-      stage.setTitle("X Solution - Login");
-      stage.centerOnScreen();
-      stage.show();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-      AlertUtils.showError("Erro de Logout", "Não foi possível voltar ao login.");
+    private void carregarTela(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent view = loader.load();
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            AlertUtils.showError("Erro de Navegação", "Não foi possível carregar a tela: " + fxmlPath + "\n" + e.getMessage());
+            e.printStackTrace();
+        }
     }
-  }
+
+    @FXML
+    public void handleNavGestaoChamados(ActionEvent event) {
+        carregarTela("/xsolution/view/GestaoChamados.fxml");
+    }
+
+    @FXML
+    public void handleNavAbrirChamados(ActionEvent event) {
+        carregarTela("/xsolution/view/AbrirChamado.fxml");
+    }
+
+    @FXML
+    public void handleNavMeusChamados(ActionEvent event) {
+        carregarTela("/xsolution/view/MeusChamados.fxml");
+    }
+
+    @FXML
+    public void handleLogout(ActionEvent event) {
+        Sessao.logout();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("X Solution - Login");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

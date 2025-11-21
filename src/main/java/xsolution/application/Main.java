@@ -1,7 +1,7 @@
 package xsolution.application;
 
 import java.sql.Connection;
-
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,23 +14,28 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // ALTERADO: Inicia pelo MainDashboard
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/MainDashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root);
-            primaryStage.setTitle("X Solution - Sistema de Gestão de TI");
-            // Maximizar a tela para melhor visualização do Dashboard
-            primaryStage.setMaximized(true); 
+
+            primaryStage.setTitle("X Solution - Login");
             primaryStage.setScene(scene);
+            primaryStage.setResizable(true);
+            primaryStage.setMaximized(true);
             primaryStage.show();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar FXML da tela de Login:");
             e.printStackTrace();
-            System.err.println("Erro crítico ao iniciar aplicação: " + e.getMessage());
         }
     }
 
+    @Override
+    public void stop() {
+        System.out.println("Fechando a aplicação e a conexão com o banco...");
+        DB.closeConnection();
+    }
     public static void main(String[] args) {
         System.out.println("Testando conexão com banco...");
         Connection conn = DB.getConnection();
@@ -38,7 +43,8 @@ public class Main extends Application {
             System.out.println("Conexao OK! Iniciando JavaFX...");
             launch(args);
         } else {
-            System.err.println("Falha ao conectar no banco. Verifique o ConnectionFactory.");
+            System.err.println("Falha ao conectar no banco.");
         }
     }
 }
+

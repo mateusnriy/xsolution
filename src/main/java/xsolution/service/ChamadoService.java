@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import xsolution.dao.ChamadoDAO;
+import xsolution.dao.ChamadoDAOImpl;
 import xsolution.exception.NegocioException;
 import xsolution.model.entity.Chamado;
 import xsolution.model.entity.Equipamento;
@@ -17,7 +18,7 @@ public class ChamadoService {
     private final ChamadoDAO chamadoDAO;
 
     public ChamadoService() {
-        this.chamadoDAO = new ChamadoDAO();
+        this.chamadoDAO = new ChamadoDAOImpl();
     }
 
     public void abrirChamado(Chamado chamado) {

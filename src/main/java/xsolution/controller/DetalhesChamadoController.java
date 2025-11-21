@@ -6,14 +6,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import xsolution.dao.UsuarioDAO; // Import do DAO criado
 import xsolution.dao.UsuarioDAOImpl;
 import xsolution.db.DB;
 import xsolution.model.entity.Chamado;
 import xsolution.model.entity.Usuario;
 import xsolution.model.enums.StatusChamado;
 import xsolution.service.ChamadoService;
-import xsolution.util.AlertUtils;
+import xsolution.utils.AlertUtils;
 
 public class DetalhesChamadoController {
 
@@ -25,23 +24,20 @@ public class DetalhesChamadoController {
 
     private Chamado chamadoAtual;
     private ChamadoService chamadoService;
-    private UsuarioDAO usuarioDAO; // Declaração do DAO
+    private UsuarioDAOImpl usuarioDAO;
     private boolean salvou = false;
 
     @FXML
     public void initialize() {
         this.chamadoService = new ChamadoService();
-        // Inicializa o DAO concreto com uma conexão
         this.usuarioDAO = new UsuarioDAOImpl(DB.getConnection());
 
-        // Popula os status
         cbStatus.setItems(FXCollections.observableArrayList(StatusChamado.values()));
         
-        // Popula os técnicos usando o DAO
         try {
             cbTecnico.setItems(FXCollections.observableArrayList(usuarioDAO.findAllTecnicos()));
         } catch (Exception e) {
-            AlertUtils.showError("Erro", "Não foi possível carregar a lista de técnicos.");
+            AlertUtils.showError("Erro", "Não foi possível carregar a lista de técnicos: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -53,26 +49,24 @@ public class DetalhesChamadoController {
         txtTitulo.setText(chamado.getTitulo());
         txtDescricao.setText(chamado.getDescricao());
         cbStatus.setValue(chamado.getStatus());
-        
-        // Seleciona o técnico atual no combo (se houver)
         cbTecnico.setValue(chamado.getTecnicoResponsavel());
     }
 
     @FXML
     public void handleSalvar() {
         try {
-            // 1. Verifica mudança de Status
-            if (cbStatus.getValue() != chamadoAtual.getStatus()) {
+            boolean mudouStatus = cbStatus.getValue() != chamadoAtual.getStatus();
+            
+            if (mudouStatus) {
                 chamadoService.atualizarStatus(chamadoAtual, cbStatus.getValue());
             }
 
-            // 2. Verifica mudança de Técnico
             if (!cbTecnico.isDisabled() && cbTecnico.getValue() != null) {
-                // Se não tinha técnico ou se mudou o técnico
-                if (chamadoAtual.getTecnicoResponsavel() == null || 
-                   !cbTecnico.getValue().equals(chamadoAtual.getTecnicoResponsavel())) {
-                    
-                    chamadoService.designarTecnico(chamadoAtual, cbTecnico.getValue());
+                Usuario novoTecnico = cbTecnico.getValue();
+                Usuario tecnicoAtual = chamadoAtual.getTecnicoResponsavel();
+
+                if (tecnicoAtual == null || !novoTecnico.getId().equals(tecnicoAtual.getId())) {
+                    chamadoService.designarTecnico(chamadoAtual, novoTecnico);
                 }
             }
 
@@ -91,7 +85,6 @@ public class DetalhesChamadoController {
     }
 
     private void closeWindow() {
-        // Obtém a janela atual e fecha
         Stage stage = (Stage) txtProtocolo.getScene().getWindow();
         stage.close();
     }

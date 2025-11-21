@@ -19,5 +19,6 @@ Desktop.ini
 # --- Logs e Outros ---
 *.log
 .github/
-.env
-DB.java
+
+# --- Credenciais do banco ---
+src/main/resources/db.properties

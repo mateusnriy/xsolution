@@ -6,11 +6,11 @@ import xsolution.model.entity.Servidor;
 import xsolution.model.entity.Usuario;
 
 public interface UsuarioDAO {
-  void inserir(Servidor servidor);
+    void inserir(Servidor servidor);
 
-  Usuario buscarPorEmail(String email);
+    Usuario buscarPorEmail(String email);
 
-  String gerarProximoIdServidor();
+    String gerarProximoIdServidor();
 
-  List<Usuario> findAllTecnicos();
+    List<Usuario> findAllTecnicos();
 }

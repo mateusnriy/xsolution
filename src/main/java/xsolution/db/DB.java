@@ -1,41 +1,80 @@
 package xsolution.db;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 public class DB {
-    private static final String URL = "jdbc:postgresql://localhost:5432/xsolution_db";
-    private static final String USER = "xsolution_admin";
-    private static final String PASSWORD = "M1nhaS3nhaF0rte!#";
 
+    private static Connection conn = null;
+
+    /**
+     * Carrega as propriedades do arquivo db.properties
+     */
+    private static Properties loadProperties() {
+        try (InputStream input = DB.class.getClassLoader().getResourceAsStream("db.properties")) {
+            Properties props = new Properties();
+            if (input == null) {
+                System.err.println("ERRO CRÍTICO: Arquivo db.properties não encontrado em src/main/resources");
+                return null;
+            }
+            props.load(input);
+            return props;
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao carregar configurações do banco: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Obtém uma NOVA conexão com o banco de dados.
+     */
     public static Connection getConnection() {
+        Properties props = loadProperties();
+        
+        if (props == null) {
+            return null;
+        }
+
+        // Extrai e limpa aspas extras caso existam (proteção contra erro comum)
+        String url = props.getProperty("db.url").replace("\"", "").trim();
+        String user = props.getProperty("db.user").replace("\"", "").trim();
+        String pass = props.getProperty("db.password").replace("\"", "").trim();
+
         try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
+            // 1. Forçar o carregamento do Driver (Essencial em alguns ambientes JavaFX)
+            Class.forName("org.postgresql.Driver");
+
+            // 2. Conectar passando user e pass explicitamente
+            return DriverManager.getConnection(url, user, pass);
+
+        } catch (ClassNotFoundException e) {
+            System.err.println("Driver do PostgreSQL não encontrado! Verifique o pom.xml.");
+            e.printStackTrace();
+            return null;
         } catch (SQLException e) {
+            System.err.println("Erro SQL ao conectar: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
+    public static void closeConnection() {
+        closeConnection(conn);
+    }
+    
     public static void closeConnection(Connection conn) {
         if (conn != null) {
             try {
                 conn.close();
             } catch (SQLException e) {
-                // ignore
+                e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Compatibilidade: método sem argumentos chamado por Main.stop().
-     * Não temos uma conexão global gerenciada aqui, portanto apenas ignora.
-     */
-    public static void closeConnection() {
-        // Nenhuma ação necessária — conexões devem ser fechadas pelos proprietários.
     }
 
     public static void closeStatement(Statement st) {
@@ -43,7 +82,7 @@ public class DB {
             try {
                 st.close();
             } catch (SQLException e) {
-                // ignore
+                e.printStackTrace();
             }
         }
     }
@@ -53,7 +92,7 @@ public class DB {
             try {
                 rs.close();
             } catch (SQLException e) {
-                // ignore
+                e.printStackTrace();
             }
         }
     }

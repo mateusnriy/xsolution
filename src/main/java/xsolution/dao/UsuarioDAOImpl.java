@@ -132,20 +132,23 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     return usuario;
   }
 
+  @Override
   public List<Usuario> findAllTecnicos() {
     List<Usuario> tecnicos = new ArrayList<>();
-    String sql = "SELECT * FROM Usuario WHERE perfil = 'TECNICO' AND status = 'ATIVO'";
+    String sql = "SELECT * FROM Usuario WHERE idUsuario LIKE 'T%' AND status = 'ATIVO' ORDER BY nome";
 
-    try (Connection conn = DB.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        ResultSet rs = pstmt.executeQuery()) {
+    PreparedStatement st = null;
+    ResultSet rs = null;
+
+    try {
+      st = conn.prepareStatement(sql);
+      rs = st.executeQuery();
 
       while (rs.next()) {
         Tecnico tecnico = new Tecnico();
         tecnico.setId(rs.getString("idUsuario"));
         tecnico.setNome(rs.getString("nome"));
         tecnico.setEmail(rs.getString("email"));
-        // Precisamos definir o perfil para a lógica de validação funcionar
         tecnico.setPerfil(PerfilUsuario.TECNICO);
         tecnico.setStatus(StatusUsuario.ATIVO);
 
@@ -153,7 +156,10 @@ public class UsuarioDAOImpl implements UsuarioDAO {
       }
 
     } catch (SQLException e) {
-      throw new RuntimeException("Erro ao buscar técnicos: " + e.getMessage(), e);
+      throw new DbException("Erro ao buscar técnicos: " + e.getMessage(), e);
+    } finally {
+      DB.closeResults(rs);
+      DB.closeStatement(st);
     }
     return tecnicos;
   }

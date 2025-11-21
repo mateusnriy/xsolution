@@ -12,7 +12,7 @@
 
 .label-subheader {
     -fx-font-size: 18px;
-    -fx-font-weight: SEMIBOLD;
+    -fx-font-weight: BOLD;
     -fx-text-fill: #555;
 }
 
@@ -36,8 +36,8 @@
     -fx-font-weight: BOLD;
     -fx-background-radius: 10px;
 }
-.nav-button:hover, .nav-button:focused {
-    -fx-background-color: #E0E8F0;
+.nav-button:hover {
+    -fx-opacity: 0.9;
 }
 
 .button-danger {
