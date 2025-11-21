@@ -35,18 +35,23 @@
          </children>
       </HBox>
       
-      <TableView fx:id="chamadosTable" VBox.vgrow="ALWAYS">
-        <columns>
-           <TableColumn fx:id="colProtocolo" prefWidth="100.0" text="Protocolo" />
-           <TableColumn fx:id="colTitulo" prefWidth="200.0" text="Título" />
-           <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />
-           <TableColumn fx:id="colSolicitante" prefWidth="150.0" text="Solicitante" />
-           <TableColumn fx:id="colTecnico" prefWidth="150.0" text="Técnico" />
-           <TableColumn fx:id="colDataAbertura" prefWidth="120.0" text="Data Abertura" />
-        </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
+      <StackPane VBox.vgrow="ALWAYS">
+         <children>
+            <TableView fx:id="chamadosTable">
+               <columns>
+                  <TableColumn fx:id="colProtocolo" prefWidth="100.0" text="Protocolo" />
+                  <TableColumn fx:id="colTitulo" prefWidth="200.0" text="Título" />
+                  <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />
+                  <TableColumn fx:id="colSolicitante" prefWidth="150.0" text="Solicitante" />
+                  <TableColumn fx:id="colTecnico" prefWidth="150.0" text="Técnico" />
+                  <TableColumn fx:id="colDataAbertura" prefWidth="120.0" text="Data Abertura" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+            <ProgressIndicator fx:id="loadingIndicator" visible="false" maxHeight="50.0" maxWidth="50.0" />
+         </children>
+      </StackPane>
    </children>
 </VBox>
