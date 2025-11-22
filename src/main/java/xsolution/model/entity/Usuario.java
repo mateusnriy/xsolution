@@ -13,6 +13,7 @@ public abstract class Usuario {
     private String senhaHash;
     protected PerfilUsuario perfil;
     private StatusUsuario status;
+    private Setor setor;
 
     public Usuario() {
     }
@@ -73,6 +74,14 @@ public abstract class Usuario {
 
     public void setStatus(StatusUsuario status) {
         this.status = status;
+    }
+
+    public Setor getSetor() {
+        return setor;
+    }
+
+    public void setSetor(Setor setor) {
+        this.setor = setor;
     }
 
     public boolean validarSenha(String senhaFornecida) {

@@ -19,6 +19,7 @@ Desktop.ini
 # --- Logs e Outros ---
 *.log
 .github/
+nb-configuration.xml
 
 # --- Credenciais do banco ---
 src/main/resources/db.properties
