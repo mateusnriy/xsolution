@@ -139,7 +139,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         s.setNome(rs.getString("nome_setor"));
         s.setSigla(rs.getString("sigla_setor"));
       } catch (SQLException ex) {
-        // Ignora se a query não teve JOIN, o objeto fica só com ID
+        
       }
       usuario.setSetor(s);
     }

@@ -61,7 +61,6 @@ public class ViewUtils {
         try {
             URL resource = ViewUtils.class.getResource(fxmlPath);
             
-            // DIAGNÓSTICO DE ERRO: Verifica se o arquivo existe antes de carregar
             if (resource == null) {
                 System.err.println("ERRO: Arquivo FXML não encontrado: " + fxmlPath);
                 AlertUtils.showError("Erro de Arquivo", "Não foi possível encontrar a tela:\n" + fxmlPath);
@@ -75,19 +74,17 @@ public class ViewUtils {
             stage.setTitle(titulo);
             stage.setScene(new Scene(root));
             
-            // Configura comportamento de Modal (bloqueia a janela de trás)
             stage.initModality(Modality.APPLICATION_MODAL);
             
-            // Tenta definir o Owner (pai) para centralizar corretamente
             if (eventOwner != null && eventOwner.getSource() instanceof Node) {
                 Stage ownerStage = (Stage) ((Node) eventOwner.getSource()).getScene().getWindow();
                 stage.initOwner(ownerStage);
             }
             
             stage.setResizable(false);
-            stage.showAndWait(); // Espera fechar
+            stage.showAndWait(); 
             
-            return true; // Sucesso
+            return true;
 
         } catch (IOException e) {
             e.printStackTrace();
