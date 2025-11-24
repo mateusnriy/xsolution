@@ -1,7 +1,6 @@
 package xsolution.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.time.LocalDate;
@@ -17,10 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -30,12 +26,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import xsolution.model.entity.Chamado;
 import xsolution.model.enums.StatusChamado;
 import xsolution.service.ChamadoService;
 import xsolution.utils.AlertUtils;
+import xsolution.utils.ViewUtils;
 
 public class GestaoChamadosController implements Initializable {
 
@@ -89,11 +84,9 @@ public class GestaoChamadosController implements Initializable {
 
         task.setOnSucceeded(event -> {
             List<Chamado> resultado = task.getValue();
-            
             todosOsChamadosCache.clear();
             todosOsChamadosCache.addAll(resultado);
             listaChamados.setAll(resultado);
-            
             loadingIndicator.setVisible(false);
             chamadosTable.setOpacity(1.0);
         });
@@ -101,7 +94,6 @@ public class GestaoChamadosController implements Initializable {
         task.setOnFailed(event -> {
             loadingIndicator.setVisible(false);
             chamadosTable.setOpacity(1.0);
-            
             Throwable erro = task.getException();
             AlertUtils.showError("Erro", "Falha ao carregar chamados: " + erro.getMessage());
             erro.printStackTrace();
@@ -115,23 +107,16 @@ public class GestaoChamadosController implements Initializable {
     private void configurarTabela() {
         colProtocolo.setCellValueFactory(new PropertyValueFactory<>("protocolo"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-
         colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
 
         colSolicitante.setCellValueFactory(cellData -> {
             Chamado c = cellData.getValue();
-            if (c.getSolicitante() != null) {
-                return new SimpleStringProperty(c.getSolicitante().getNome());
-            }
-            return new SimpleStringProperty("N/A");
+            return new SimpleStringProperty(c.getSolicitante() != null ? c.getSolicitante().getNome() : "N/A");
         });
 
         colTecnico.setCellValueFactory(cellData -> {
             Chamado c = cellData.getValue();
-            if (c.getTecnicoResponsavel() != null) {
-                return new SimpleStringProperty(c.getTecnicoResponsavel().getNome());
-            }
-            return new SimpleStringProperty("Pendente");
+            return new SimpleStringProperty(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "Pendente");
         });
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -156,79 +141,50 @@ public class GestaoChamadosController implements Initializable {
                 carregarDados();
                 return;
             }
-
             List<Chamado> filtrados = todosOsChamadosCache.stream()
                     .filter(c -> {
+                        boolean matchProtocolo = true;
                         if (filterProtocolo.getText() != null && !filterProtocolo.getText().trim().isEmpty()) {
-                            String filtroTexto = filterProtocolo.getText().toLowerCase().trim();
-                            String protocoloChamado = c.getProtocolo() != null ? c.getProtocolo().toLowerCase() : "";
-                            if (!protocoloChamado.contains(filtroTexto)) {
-                                return false;
-                            }
+                            String filtro = filterProtocolo.getText().toLowerCase().trim();
+                            String proto = c.getProtocolo() != null ? c.getProtocolo().toLowerCase() : "";
+                            matchProtocolo = proto.contains(filtro);
                         }
-
-                        if (filterStatus.getValue() != null) {
-                            if (c.getStatus() != filterStatus.getValue()) {
-                                return false;
-                            }
+                        boolean matchStatus = filterStatus.getValue() == null || c.getStatus() == filterStatus.getValue();
+                        boolean matchData = true;
+                        if (filterDataInicio.getValue() != null && c.getDataAbertura() != null) {
+                            matchData = c.getDataAbertura().toLocalDate().equals(filterDataInicio.getValue());
                         }
-
-                        if (filterDataInicio.getValue() != null) {
-                            LocalDate dataFiltro = filterDataInicio.getValue();
-                            if (c.getDataAbertura() != null) {
-                                if (!c.getDataAbertura().toLocalDate().equals(dataFiltro)) {
-                                    return false;
-                                }
-                            } else {
-                                return false;
-                            }
-                        }
-                        return true;
+                        return matchProtocolo && matchStatus && matchData;
                     })
                     .collect(Collectors.toList());
 
             listaChamados.setAll(filtrados);
-
-            if (filtrados.isEmpty()) {
-                System.out.println("Filtro aplicado: Nenhum registro encontrado.");
-            }
-
         } catch (Exception e) {
             AlertUtils.showError("Erro ao filtrar", e.getMessage());
-            e.printStackTrace();
         }
     }
 
     @FXML
     public void handleLimparFiltros(ActionEvent event) {
         filterProtocolo.clear();
-        filterStatus.getSelectionModel().clearSelection();
         filterStatus.setValue(null);
         filterDataInicio.setValue(null);
         listaChamados.setAll(todosOsChamadosCache);
     }
 
     private void handleAbrirDetalhes(Chamado chamadoSelecionado) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/ModalChamados.fxml"));
-            Parent root = loader.load();
 
-            DetalhesChamadoController controller = loader.getController();
-            controller.setChamado(chamadoSelecionado);
+        DetalhesChamadoController controller = ViewUtils.abrirModal(
+            "/xsolution/view/ModalChamados.fxml",
+            "Detalhes - " + chamadoSelecionado.getProtocolo(),
+            (detalhesCtrl) -> {
+                detalhesCtrl.setChamado(chamadoSelecionado);
+            },
+            null 
+        );
 
-            Stage stage = new Stage();
-            stage.setTitle("Editar Chamado - " + chamadoSelecionado.getProtocolo());
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-
-            if (controller.isSalvou()) {
-                carregarDados();
-            }
-
-        } catch (IOException e) {
-            AlertUtils.showError("Erro", "Falha ao abrir detalhes: " + e.getMessage());
-            e.printStackTrace();
+        if (controller != null && controller.isSalvou()) {
+            carregarDados();
         }
     }
 
@@ -237,7 +193,7 @@ public class GestaoChamadosController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Salvar Relatório");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivos CSV", "*.csv"));
-        fileChooser.setInitialFileName("relatorio_chamados_" + LocalDate.now() + ".csv");
+        fileChooser.setInitialFileName("relatorio_" + LocalDate.now() + ".csv");
 
         File file = fileChooser.showSaveDialog(chamadosTable.getScene().getWindow());
 
@@ -248,18 +204,16 @@ public class GestaoChamadosController implements Initializable {
                 sb.append("Protocolo;Titulo;Status;Data Abertura;Solicitante;Tecnico\n");
 
                 for (Chamado c : chamadosTable.getItems()) {
-                    sb.append(c.getProtocolo()).append(";");
-                    sb.append(c.getTitulo()).append(";");
-                    sb.append(c.getStatus()).append(";");
-                    sb.append(c.getDataAbertura()).append(";");
-                    sb.append(c.getSolicitante() != null ? c.getSolicitante().getNome() : "N/A").append(";");
-                    sb.append(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "Pendente")
-                            .append("\n");
+                    sb.append(c.getProtocolo()).append(";")
+                      .append(c.getTitulo()).append(";")
+                      .append(c.getStatus()).append(";")
+                      .append(c.getDataAbertura()).append(";")
+                      .append(c.getSolicitante() != null ? c.getSolicitante().getNome() : "N/A").append(";")
+                      .append(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "Pendente")
+                      .append("\n");
                 }
-
                 writer.write(sb.toString());
                 AlertUtils.showInfo("Sucesso", "Relatório salvo em: " + file.getAbsolutePath());
-
             } catch (Exception e) {
                 AlertUtils.showError("Erro", "Falha ao gerar relatório: " + e.getMessage());
             }

@@ -5,7 +5,6 @@ import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -16,23 +15,12 @@ import xsolution.utils.ViewUtils;
 
 public class MainDashboardController implements Initializable {
 
-    @FXML
-    private StackPane contentArea;
-
-    @FXML
-    private Button navAbrirChamadosButton;
-
-    @FXML
-    private Button navMeusChamadosButton;
-
-    @FXML
-    private Button navGestaoChamadosButton;
-
-    @FXML
-    private Button navGestaoEquipamentosButton;
-
-    @FXML
-    private Button navLogoutButton;
+    @FXML private StackPane contentArea;
+    @FXML private Button navAbrirChamadosButton;
+    @FXML private Button navMeusChamadosButton;
+    @FXML private Button navGestaoChamadosButton;
+    @FXML private Button navGestaoEquipamentosButton;
+    @FXML private Button navLogoutButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -42,26 +30,15 @@ public class MainDashboardController implements Initializable {
     }
 
     private void carregarTela(String fxmlPath) {
-        try {
-            URL resource = getClass().getResource(fxmlPath);
-            if (resource == null) {
-                AlertUtils.showError("Erro Crítico", "Arquivo FXML não encontrado: " + fxmlPath);
-                return;
-            }
+        if (contentArea == null) {
+            AlertUtils.showError("Erro Crítico", "O container 'contentArea' não foi injetado. Verifique o fx:id no MainDashboard.fxml.");
+            return;
+        }
 
-            if (contentArea == null) {
-                AlertUtils.showError("Erro Crítico", "O container 'contentArea' não foi injetado. Verifique o fx:id no MainDashboard.fxml.");
-                return;
-            }
-
-            FXMLLoader loader = new FXMLLoader(resource);
-            Parent view = loader.load();
+        Parent view = ViewUtils.carregarView(fxmlPath);
+        
+        if (view != null) {
             contentArea.getChildren().setAll(view);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            AlertUtils.showError("Erro de Navegação", 
-                "Falha ao carregar a tela: " + fxmlPath + "\n\nErro: " + e.getMessage() + "\nCausa: " + e.getCause());
         }
     }
 
@@ -83,6 +60,6 @@ public class MainDashboardController implements Initializable {
     @FXML
     public void handleLogout(ActionEvent event) {
         Sessao.logout();
-        ViewUtils.carregarCena(event, "/xsolution/view/Login.fxml", "X Solution - Login");
+        ViewUtils.mudarCena(event, "/xsolution/view/Login.fxml", "X Solution - Login");
     }
 }

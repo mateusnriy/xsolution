@@ -2,6 +2,7 @@ package xsolution.utils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.function.Consumer;
 
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
@@ -13,83 +14,83 @@ import javafx.stage.Stage;
 
 public class ViewUtils {
 
-    public static void carregarCena(Event event, String fxmlPath, String titulo) {
+    public static void mudarCena(Event event, String fxmlPath, String titulo) {
         try {
-            URL resource = ViewUtils.class.getResource(fxmlPath);
-            if (resource == null) {
-                AlertUtils.showError("Erro Crítico", "Arquivo FXML não encontrado: " + fxmlPath);
-                return;
-            }
-
-            FXMLLoader loader = new FXMLLoader(resource);
-            Parent root = loader.load();
-            
+            Parent root = loadFxml(fxmlPath);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
             Scene scene = new Scene(root);
-            stage.setScene(scene);
             
+            stage.setScene(scene);
             if (titulo != null) {
                 stage.setTitle(titulo);
             }
-            
-            stage.centerOnScreen();
+            stage.setMaximized(true);
             stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            AlertUtils.showError("Erro de Navegação", "Não foi possível carregar a tela: " + fxmlPath + "\n" + e.getMessage());
+        } catch (Exception e) {
+            tratarErro(e, fxmlPath);
         }
     }
 
     public static Parent carregarView(String fxmlPath) {
         try {
-            URL resource = ViewUtils.class.getResource(fxmlPath);
-            if (resource == null) {
-                throw new IOException("Arquivo FXML não encontrado: " + fxmlPath);
-            }
-            FXMLLoader loader = new FXMLLoader(resource);
-            return loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-            AlertUtils.showError("Erro Interno", "Falha ao carregar componente visual: " + e.getMessage());
+            return loadFxml(fxmlPath);
+        } catch (Exception e) {
+            tratarErro(e, fxmlPath);
             return null;
         }
     }
 
-    public static boolean abrirModal(String fxmlPath, String titulo, Event eventOwner) {
+    public static <T> T abrirModal(String fxmlPath, String titulo, Consumer<T> initializer, Event eventOwner) {
         try {
-            URL resource = ViewUtils.class.getResource(fxmlPath);
-            
-            if (resource == null) {
-                System.err.println("ERRO: Arquivo FXML não encontrado: " + fxmlPath);
-                AlertUtils.showError("Erro de Arquivo", "Não foi possível encontrar a tela:\n" + fxmlPath);
-                return false;
-            }
-
-            FXMLLoader loader = new FXMLLoader(resource);
+            FXMLLoader loader = new FXMLLoader(getResource(fxmlPath));
             Parent root = loader.load();
+            
+            T controller = loader.getController();
+            
+            if (initializer != null) {
+                initializer.accept(controller);
+            }
 
             Stage stage = new Stage();
             stage.setTitle(titulo);
             stage.setScene(new Scene(root));
-            
             stage.initModality(Modality.APPLICATION_MODAL);
-            
+            stage.setResizable(false);
+
             if (eventOwner != null && eventOwner.getSource() instanceof Node) {
                 Stage ownerStage = (Stage) ((Node) eventOwner.getSource()).getScene().getWindow();
                 stage.initOwner(ownerStage);
             }
-            
-            stage.setResizable(false);
-            stage.showAndWait(); 
-            
-            return true;
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            AlertUtils.showError("Erro ao abrir tela", "Falha técnica: " + e.getMessage());
-            return false;
+            stage.showAndWait();
+            
+            return controller;
+
+        } catch (Exception e) {
+            tratarErro(e, fxmlPath);
+            return null;
         }
+    }
+
+    public static void abrirModalSimples(String fxmlPath, String titulo, Event eventOwner) {
+        abrirModal(fxmlPath, titulo, null, eventOwner);
+    }
+
+    private static Parent loadFxml(String fxmlPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getResource(fxmlPath));
+        return loader.load();
+    }
+
+    private static URL getResource(String fxmlPath) {
+        URL resource = ViewUtils.class.getResource(fxmlPath);
+        if (resource == null) {
+            throw new IllegalArgumentException("Arquivo FXML não encontrado: " + fxmlPath);
+        }
+        return resource;
+    }
+
+    private static void tratarErro(Exception e, String path) {
+        e.printStackTrace();
+        AlertUtils.showError("Erro de Interface", "Falha ao carregar: " + path + "\n" + e.getMessage());
     }
 }

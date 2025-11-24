@@ -24,22 +24,14 @@ import xsolution.utils.ViewUtils;
 
 public class MeusChamadosController implements Initializable {
 
-    @FXML
-    private TableView<Chamado> tabelaMeusChamados;
-    @FXML
-    private TableColumn<Chamado, String> colProtocolo;
-    @FXML
-    private TableColumn<Chamado, String> colTitulo;
-    @FXML
-    private TableColumn<Chamado, String> colStatus;
-    @FXML
-    private TableColumn<Chamado, String> colDataAbertura;
-    @FXML
-    private TableColumn<Chamado, String> colTecnico;
-    @FXML
-    private Button btnNovoChamado;
-    @FXML
-    private ProgressIndicator loadingIndicator;
+    @FXML private TableView<Chamado> tabelaMeusChamados;
+    @FXML private TableColumn<Chamado, String> colProtocolo;
+    @FXML private TableColumn<Chamado, String> colTitulo;
+    @FXML private TableColumn<Chamado, String> colStatus;
+    @FXML private TableColumn<Chamado, String> colDataAbertura;
+    @FXML private TableColumn<Chamado, String> colTecnico;
+    @FXML private Button btnNovoChamado;
+    @FXML private ProgressIndicator loadingIndicator;
 
     private ChamadoService chamadoService;
 
@@ -53,7 +45,6 @@ public class MeusChamadosController implements Initializable {
     private void configurarTabela() {
         colProtocolo.setCellValueFactory(new PropertyValueFactory<>("protocolo"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-
         colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -97,10 +88,12 @@ public class MeusChamadosController implements Initializable {
 
     @FXML
     private void handleNovoChamado(ActionEvent event) {
-        String fxmlPath = "/xsolution/view/ModalNovoChamado.fxml";
-        boolean sucesso = ViewUtils.abrirModal(fxmlPath, "Abrir Novo Chamado", event);
-        if (sucesso) {
-            carregarMeusChamados();
-        }
+        ViewUtils.abrirModalSimples(
+            "/xsolution/view/ModalNovoChamado.fxml", 
+            "Abrir Novo Chamado", 
+            event
+        );
+        
+        carregarMeusChamados();
     }
 }
