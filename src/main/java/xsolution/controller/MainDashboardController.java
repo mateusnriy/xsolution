@@ -10,17 +10,24 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import xsolution.utils.AlertUtils;
+import xsolution.utils.ScreenUtils;
 import xsolution.utils.Sessao;
 import xsolution.utils.ViewUtils;
 
 public class MainDashboardController implements Initializable {
 
-    @FXML private StackPane contentArea;
-    @FXML private Button navAbrirChamadosButton;
-    @FXML private Button navMeusChamadosButton;
-    @FXML private Button navGestaoChamadosButton;
-    @FXML private Button navGestaoEquipamentosButton;
-    @FXML private Button navLogoutButton;
+    @FXML
+    private StackPane contentArea;
+    @FXML
+    private Button navAbrirChamadosButton;
+    @FXML
+    private Button navMeusChamadosButton;
+    @FXML
+    private Button navGestaoChamadosButton;
+    @FXML
+    private Button navGestaoEquipamentosButton;
+    @FXML
+    private Button navLogoutButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -31,12 +38,13 @@ public class MainDashboardController implements Initializable {
 
     private void carregarTela(String fxmlPath) {
         if (contentArea == null) {
-            AlertUtils.showError("Erro Crítico", "O container 'contentArea' não foi injetado. Verifique o fx:id no MainDashboard.fxml.");
+            AlertUtils.showError("Erro Crítico",
+                    "O container 'contentArea' não foi injetado. Verifique o fx:id no MainDashboard.fxml.");
             return;
         }
 
         Parent view = ViewUtils.carregarView(fxmlPath);
-        
+
         if (view != null) {
             contentArea.getChildren().setAll(view);
         }
@@ -59,7 +67,6 @@ public class MainDashboardController implements Initializable {
 
     @FXML
     public void handleLogout(ActionEvent event) {
-        Sessao.logout();
-        ViewUtils.mudarCena(event, "/xsolution/view/Login.fxml", "X Solution - Login");
+        ScreenUtils.changeScreen(event, "/xsolution/view/Login.fxml", "X Solution - Login");
     }
 }

@@ -29,8 +29,16 @@ public class DB {
 
     public static Connection getConnection() {
         Properties props = loadProperties();
-        
-        if (props == null) {
+
+        if (props == null)
+            return null;
+
+        String dbUrl = props.getProperty("db.url");
+        String dbUser = props.getProperty("db.user");
+        String dbPass = props.getProperty("db.password");
+
+        if (dbUrl == null || dbUser == null || dbPass == null) {
+            System.err.println("ERRO: As chaves db.url, db.user ou db.password não foram encontradas no db.properties");
             return null;
         }
 
@@ -56,7 +64,7 @@ public class DB {
     public static void closeConnection() {
         closeConnection(conn);
     }
-    
+
     public static void closeConnection(Connection conn) {
         if (conn != null) {
             try {
