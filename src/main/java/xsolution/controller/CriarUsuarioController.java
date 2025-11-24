@@ -1,33 +1,34 @@
 package xsolution.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import xsolution.exception.DbException;
 import xsolution.service.UsuarioService;
 import xsolution.utils.AlertUtils;
+import xsolution.utils.ScreenUtils;
 
 public class CriarUsuarioController implements Initializable {
 
-    @FXML private TextField nomeField;
-    @FXML private TextField emailField;
-    @FXML private PasswordField senhaField;
-    @FXML private PasswordField confirmSenhaField;
-    @FXML private Button createButton;
-    @FXML private Hyperlink backToLoginLink;
+    @FXML
+    private TextField nomeField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField senhaField;
+    @FXML
+    private PasswordField confirmSenhaField;
+    @FXML
+    private Button createButton;
+    @FXML
+    private Hyperlink backToLoginLink;
 
     private UsuarioService usuarioService;
 
@@ -57,7 +58,7 @@ public class CriarUsuarioController implements Initializable {
 
             // Chama o serviço sem passar setor (o serviço usa o 999)
             usuarioService.criarUsuario(nome, email, senha);
-            
+
             AlertUtils.showInfo("Sucesso", "Conta criada com sucesso! Faça o login.");
             handleBack(event);
 
@@ -71,21 +72,6 @@ public class CriarUsuarioController implements Initializable {
 
     @FXML
     private void handleBack(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("X Solution - Login");
-            stage.setResizable(true);
-            stage.setMaximized(true);
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            AlertUtils.showError("Erro", "Não foi possível voltar ao login.");
-        }
+        ScreenUtils.changeScreen(event, "/xsolution/view/Login.fxml", "X Solution - Login");
     }
 }

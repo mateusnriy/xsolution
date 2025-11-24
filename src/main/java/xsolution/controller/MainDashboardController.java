@@ -1,6 +1,5 @@
 package xsolution.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -8,13 +7,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import xsolution.utils.AlertUtils;
+import xsolution.utils.ScreenUtils;
 import xsolution.utils.Sessao;
 
 public class MainDashboardController implements Initializable {
@@ -53,7 +50,8 @@ public class MainDashboardController implements Initializable {
             }
 
             if (contentArea == null) {
-                AlertUtils.showError("Erro Crítico", "O container 'contentArea' não foi injetado. Verifique o fx:id no MainDashboard.fxml.");
+                AlertUtils.showError("Erro Crítico",
+                        "O container 'contentArea' não foi injetado. Verifique o fx:id no MainDashboard.fxml.");
                 return;
             }
 
@@ -63,8 +61,9 @@ public class MainDashboardController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            AlertUtils.showError("Erro de Navegação", 
-                "Falha ao carregar a tela: " + fxmlPath + "\n\nErro: " + e.getMessage() + "\nCausa: " + e.getCause());
+            AlertUtils.showError("Erro de Navegação",
+                    "Falha ao carregar a tela: " + fxmlPath + "\n\nErro: " + e.getMessage() + "\nCausa: "
+                            + e.getCause());
         }
     }
 
@@ -90,16 +89,6 @@ public class MainDashboardController implements Initializable {
 
     @FXML
     public void handleLogout(ActionEvent event) {
-        Sessao.logout();
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("X Solution - Login");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ScreenUtils.changeScreen(event, "/xsolution/view/Login.fxml", "X Solution - Login");
     }
 }

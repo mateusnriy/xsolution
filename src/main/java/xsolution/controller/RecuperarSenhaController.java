@@ -1,16 +1,10 @@
 package xsolution.controller;
 
-import java.io.IOException;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import xsolution.utils.AlertUtils;
+import xsolution.utils.ScreenUtils;
 
 public class RecuperarSenhaController {
   @FXML
@@ -36,23 +30,6 @@ public class RecuperarSenhaController {
 
   @FXML
   private void handleBack(ActionEvent event) {
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("/xsolution/view/Login.fxml"));
-      Parent root = loader.load();
-      Scene scene = new Scene(root);
-
-      Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-      stage.setScene(scene);
-      stage.setTitle("X Solution - Login");
-
-      stage.setResizable(true);
-      stage.setMaximized(true);
-
-      stage.show();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-      AlertUtils.showError("Erro", "Não foi possível voltar ao login.");
-    }
+    ScreenUtils.changeScreen(event, "/xsolution/view/Login.fxml", "X Solution - Login");
   }
 }
