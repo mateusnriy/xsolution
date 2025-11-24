@@ -4,7 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import xsolution.utils.AlertUtils;
-import xsolution.utils.ScreenUtils;
+import xsolution.utils.ViewUtils;
 
 public class RecuperarSenhaController {
   @FXML
@@ -30,6 +30,6 @@ public class RecuperarSenhaController {
 
   @FXML
   private void handleBack(ActionEvent event) {
-    ScreenUtils.changeScreen(event, "/xsolution/view/Login.fxml", "X Solution - Login");
+    ViewUtils.trocarCenaPrincipal(event, "/xsolution/view/Login.fxml", "X Solution - Login");
   }
 }

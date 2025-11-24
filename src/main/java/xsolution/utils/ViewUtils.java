@@ -13,19 +13,23 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ViewUtils {
-
-    public static void mudarCena(Event event, String fxmlPath, String titulo) {
+    public static void trocarCenaPrincipal(Event event, String fxmlPath, String titulo) {
         try {
-            Parent root = loadFxml(fxmlPath);
+            Parent newRoot = loadFxml(fxmlPath);
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            
-            stage.setScene(scene);
+
+            Scene currentScene = stage.getScene();
+            currentScene.setRoot(newRoot);
+
             if (titulo != null) {
                 stage.setTitle(titulo);
             }
-            stage.setMaximized(true);
-            stage.show();
+
+            if (!stage.isMaximized()) {
+                stage.setMaximized(true);
+            }
+
         } catch (Exception e) {
             tratarErro(e, fxmlPath);
         }
@@ -44,9 +48,9 @@ public class ViewUtils {
         try {
             FXMLLoader loader = new FXMLLoader(getResource(fxmlPath));
             Parent root = loader.load();
-            
+
             T controller = loader.getController();
-            
+
             if (initializer != null) {
                 initializer.accept(controller);
             }
@@ -57,13 +61,14 @@ public class ViewUtils {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
 
+            // Define quem é o "pai" da janela (opcional, mas bom para UX)
             if (eventOwner != null && eventOwner.getSource() instanceof Node) {
                 Stage ownerStage = (Stage) ((Node) eventOwner.getSource()).getScene().getWindow();
                 stage.initOwner(ownerStage);
             }
 
             stage.showAndWait();
-            
+
             return controller;
 
         } catch (Exception e) {

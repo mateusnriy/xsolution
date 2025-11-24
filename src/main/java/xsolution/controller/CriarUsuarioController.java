@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import xsolution.exception.DbException;
 import xsolution.service.UsuarioService;
 import xsolution.utils.AlertUtils;
-import xsolution.utils.ScreenUtils;
+import xsolution.utils.ViewUtils;
 
 public class CriarUsuarioController implements Initializable {
 
@@ -72,6 +72,6 @@ public class CriarUsuarioController implements Initializable {
 
     @FXML
     private void handleBack(ActionEvent event) {
-        ScreenUtils.changeScreen(event, "/xsolution/view/Login.fxml", "X Solution - Login");
+        ViewUtils.trocarCenaPrincipal(event, "/xsolution/view/Login.fxml", "X Solution - Login");
     }
 }
