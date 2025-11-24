@@ -14,22 +14,38 @@ import javafx.stage.Stage;
 
 public class ViewUtils {
 
-    public static void mudarCena(Event event, String fxmlPath, String titulo) {
+    // --- NAVEGAÇÃO PRINCIPAL (Substitui o ScreenUtils) ---
+
+    /**
+     * Troca a tela inteira mantendo o Stage (janela) atual.
+     * Usa setRoot para evitar redimensionamento indesejado.
+     */
+    public static void trocarCenaPrincipal(Event event, String fxmlPath, String titulo) {
         try {
-            Parent root = loadFxml(fxmlPath);
+            Parent newRoot = loadFxml(fxmlPath);
+
+            // Recupera o Stage através do componente que disparou o evento
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            
-            stage.setScene(scene);
+
+            // Recupera a Scene atual e troca apenas a raiz visual
+            Scene currentScene = stage.getScene();
+            currentScene.setRoot(newRoot);
+
             if (titulo != null) {
                 stage.setTitle(titulo);
             }
-            stage.setMaximized(true);
-            stage.show();
+
+            // Hack para garantir que fique maximizado em alguns SOs
+            if (!stage.isMaximized()) {
+                stage.setMaximized(true);
+            }
+
         } catch (Exception e) {
             tratarErro(e, fxmlPath);
         }
     }
+
+    // --- CARREGAMENTO DE COMPONENTES (Para StackPane/Dashboard) ---
 
     public static Parent carregarView(String fxmlPath) {
         try {
@@ -40,13 +56,16 @@ public class ViewUtils {
         }
     }
 
+    // --- MODAIS (Popups) ---
+
     public static <T> T abrirModal(String fxmlPath, String titulo, Consumer<T> initializer, Event eventOwner) {
         try {
             FXMLLoader loader = new FXMLLoader(getResource(fxmlPath));
             Parent root = loader.load();
-            
+
             T controller = loader.getController();
-            
+
+            // Executa lógica de inicialização (ex: passar dados para o controller)
             if (initializer != null) {
                 initializer.accept(controller);
             }
@@ -57,13 +76,14 @@ public class ViewUtils {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
 
+            // Define quem é o "pai" da janela (opcional, mas bom para UX)
             if (eventOwner != null && eventOwner.getSource() instanceof Node) {
                 Stage ownerStage = (Stage) ((Node) eventOwner.getSource()).getScene().getWindow();
                 stage.initOwner(ownerStage);
             }
 
             stage.showAndWait();
-            
+
             return controller;
 
         } catch (Exception e) {
@@ -75,6 +95,8 @@ public class ViewUtils {
     public static void abrirModalSimples(String fxmlPath, String titulo, Event eventOwner) {
         abrirModal(fxmlPath, titulo, null, eventOwner);
     }
+
+    // --- MÉTODOS PRIVADOS AUXILIARES ---
 
     private static Parent loadFxml(String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader(getResource(fxmlPath));

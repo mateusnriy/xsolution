@@ -9,8 +9,8 @@ import xsolution.exception.DbException;
 import xsolution.model.entity.Usuario;
 import xsolution.service.UsuarioService;
 import xsolution.utils.AlertUtils;
-import xsolution.utils.ScreenUtils;
 import xsolution.utils.Sessao;
+import xsolution.utils.ViewUtils;
 
 public class LoginController {
     @FXML
@@ -42,7 +42,7 @@ public class LoginController {
             if (usuarioAutenticado != null) {
                 Sessao.setUsuarioLogado(usuarioAutenticado);
 
-                ScreenUtils.changeScreen(event, "/xsolution/view/MainDashboard.fxml", "X Solution - Dashboard");
+                ViewUtils.trocarCenaPrincipal(event, "/xsolution/view/MainDashboard.fxml", "X Solution - Dashboard");
             } else {
                 AlertUtils.showError("Login Falhou", "Usuário ou senha incorretos.");
             }
@@ -53,11 +53,11 @@ public class LoginController {
 
     @FXML
     private void handleRecover(ActionEvent event) {
-        ScreenUtils.changeScreen(event, "/xsolution/view/RecuperarSenha.fxml", "Recuperar Senha");
+        ViewUtils.trocarCenaPrincipal(event, "/xsolution/view/RecuperarSenha.fxml", "Recuperar Senha");
     }
 
     @FXML
     private void handleCreate(ActionEvent event) {
-        ScreenUtils.changeScreen(event, "/xsolution/view/CriarConta.fxml", "Criar Conta");
+        ViewUtils.trocarCenaPrincipal(event, "/xsolution/view/CriarConta.fxml", "Criar Conta");
     }
 }

@@ -10,7 +10,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import xsolution.utils.AlertUtils;
-import xsolution.utils.ScreenUtils;
 import xsolution.utils.Sessao;
 import xsolution.utils.ViewUtils;
 
@@ -67,6 +66,6 @@ public class MainDashboardController implements Initializable {
 
     @FXML
     public void handleLogout(ActionEvent event) {
-        ScreenUtils.changeScreen(event, "/xsolution/view/Login.fxml", "X Solution - Login");
+        ViewUtils.trocarCenaPrincipal(event, "/xsolution/view/Login.fxml", "X Solution - Login");
     }
 }
