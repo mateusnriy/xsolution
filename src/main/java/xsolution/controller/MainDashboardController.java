@@ -32,6 +32,9 @@ public class MainDashboardController implements Initializable {
     private Button navGestaoChamadosButton;
 
     @FXML
+    private Button navGestaoEquipamentosButton;
+
+    @FXML
     private Button navLogoutButton;
 
     @Override
@@ -43,18 +46,36 @@ public class MainDashboardController implements Initializable {
 
     private void carregarTela(String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            URL resource = getClass().getResource(fxmlPath);
+            if (resource == null) {
+                AlertUtils.showError("Erro Crítico", "Arquivo FXML não encontrado: " + fxmlPath);
+                return;
+            }
+
+            if (contentArea == null) {
+                AlertUtils.showError("Erro Crítico", "O container 'contentArea' não foi injetado. Verifique o fx:id no MainDashboard.fxml.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(resource);
             Parent view = loader.load();
             contentArea.getChildren().setAll(view);
-        } catch (IOException e) {
-            AlertUtils.showError("Erro de Navegação", "Não foi possível carregar a tela: " + fxmlPath + "\n" + e.getMessage());
+
+        } catch (Exception e) {
             e.printStackTrace();
+            AlertUtils.showError("Erro de Navegação", 
+                "Falha ao carregar a tela: " + fxmlPath + "\n\nErro: " + e.getMessage() + "\nCausa: " + e.getCause());
         }
     }
 
     @FXML
     public void handleNavGestaoChamados(ActionEvent event) {
         carregarTela("/xsolution/view/GestaoChamados.fxml");
+    }
+
+    @FXML
+    public void handleNavGestaoEquipamentos(ActionEvent event) {
+        carregarTela("/xsolution/view/GestaoEquipamentos.fxml");
     }
 
     @FXML
