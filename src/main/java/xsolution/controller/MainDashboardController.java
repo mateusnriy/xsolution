@@ -76,11 +76,6 @@ public class MainDashboardController implements Initializable {
     }
 
     @FXML
-    public void handleNavAbrirChamados(ActionEvent event) {
-        carregarTela("/xsolution/view/AbrirChamado.fxml");
-    }
-
-    @FXML
     public void handleNavMeusChamados(ActionEvent event) {
         carregarTela("/xsolution/view/MeusChamados.fxml");
     }

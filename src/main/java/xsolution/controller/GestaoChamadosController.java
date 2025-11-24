@@ -56,8 +56,8 @@ public class GestaoChamadosController implements Initializable {
     @FXML private TableColumn<Chamado, String> colDataAbertura;
 
     private ChamadoService chamadoService;
-    private ObservableList<Chamado> listaChamados; // Lista exibida na tabela
-    private List<Chamado> todosOsChamadosCache; // Cache para filtro em memória
+    private ObservableList<Chamado> listaChamados; 
+    private List<Chamado> todosOsChamadosCache; 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

@@ -33,6 +33,13 @@ public class EquipamentoService {
         return dao.listarTodos();
     }
     
+    public Equipamento buscarPorPatrimonio(String numPatrimonio) {
+        if (numPatrimonio == null || numPatrimonio.trim().isEmpty()) {
+            throw new DbException("O número do patrimônio não pode ser vazio para busca.");
+        }
+        return dao.buscarPorPatrimonio(numPatrimonio);
+    }
+    
     public void remover(Equipamento equipamento) {
         if (equipamento == null || equipamento.getId() == null) {
             throw new DbException("Equipamento inválido para remoção.");

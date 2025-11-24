@@ -13,13 +13,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import xsolution.dao.EquipamentoDAO;
-import xsolution.dao.EquipamentoDAOImpl;
 import xsolution.exception.DbException;
 import xsolution.model.entity.Chamado;
 import xsolution.model.entity.Equipamento;
 import xsolution.model.enums.StatusEquipamento;
 import xsolution.service.ChamadoService;
+import xsolution.service.EquipamentoService;
 import xsolution.utils.AlertUtils;
 import xsolution.utils.Sessao;
 
@@ -34,13 +33,13 @@ public class AbrirChamadoController implements Initializable {
     @FXML private Button btnCancelar;
 
     private ChamadoService chamadoService;
-    private EquipamentoDAO equipamentoDAO;
+    private EquipamentoService equipamentoService;
     private Equipamento equipamentoSelecionado;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.chamadoService = new ChamadoService();
-        this.equipamentoDAO = new EquipamentoDAOImpl(); 
+        this.equipamentoService = new EquipamentoService(); 
 
         btnRegistrar.setDisable(true);
     }
@@ -61,7 +60,7 @@ public class AbrirChamadoController implements Initializable {
         Task<Equipamento> task = new Task<>() {
             @Override
             protected Equipamento call() throws Exception {
-                return equipamentoDAO.buscarPorPatrimonio(patrimonio);
+                return equipamentoService.buscarPorPatrimonio(patrimonio);
             }
         };
 

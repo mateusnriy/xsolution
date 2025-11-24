@@ -78,7 +78,6 @@ public class MeusChamadosController implements Initializable {
         Task<List<Chamado>> task = new Task<>() {
             @Override
             protected List<Chamado> call() throws Exception {
-                // aqui serve para buscar apenas os chamados do usuário logado
                 return chamadoService.buscarPorSolicitante(Sessao.getUsuarioLogado());
             }
         };

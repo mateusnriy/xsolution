@@ -46,8 +46,8 @@ public class ChamadoService {
 
         chamado.setStatus(StatusChamado.ABERTO); 
         chamado.setDataAbertura(LocalDateTime.now());
-        chamado.setDataFechamento(null); // Garantir que não nasça fechado
-        // Lógica para gerar um protocolo utilizando o seguinte formato: ANO-MES-DIA-HORA-MINUTO-SEGUNDO + número aleatório
+        chamado.setDataFechamento(null); 
+        // aqui adicionei a lógica para gerar um protocolo utilizando o seguinte formato: ANO-MES-DIA-HORA-MINUTO-SEGUNDO + número aleatório
         if (chamado.getProtocolo() == null || chamado.getProtocolo().isEmpty()) {
             LocalDateTime agora = LocalDateTime.now();
             int randomSuffix = 100 + (int) (Math.random() * 900);
