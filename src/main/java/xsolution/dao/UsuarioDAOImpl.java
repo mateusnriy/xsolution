@@ -26,35 +26,35 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
   @Override
   public String gerarProximoIdServidor() {
+    String sql = "SELECT nextval('seq_servidor_id')"; 
     PreparedStatement st = null;
     ResultSet rs = null;
-    String sql = "SELECT MAX(CAST(SUBSTRING(idUsuario FROM 2) AS INTEGER)) FROM usuario WHERE idUsuario LIKE 'S%'";
 
     try {
       st = conn.prepareStatement(sql);
       rs = st.executeQuery();
 
       if (rs.next()) {
-        int maxId = rs.getInt(1);
-        int nextId = maxId + 1;
+        long nextId = rs.getLong(1);
         return String.format("S%03d", nextId);
       } else {
-        return "S001";
+        throw new DbException("Erro ao gerar ID: A sequence do banco não retornou valor.");
       }
 
     } catch (SQLException e) {
       throw new DbException("Erro ao gerar novo ID de servidor: " + e.getMessage(), e);
     } finally {
-      DB.closeStatement(st);
       DB.closeResults(rs);
+      DB.closeStatement(st);
     }
   }
 
   @Override
   public void inserir(Servidor servidor) {
     PreparedStatement st = null;
-    String sql = "INSERT INTO usuario (idUsuario, nome, email, senha, status) "
-        + "VALUES (?, ?, ?, ?, ?)";
+    
+    String sql = "INSERT INTO usuario (idUsuario, nome, email, senha, status, tipoUsuario) "
+        + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
       st = conn.prepareStatement(sql);
@@ -63,9 +63,15 @@ public class UsuarioDAOImpl implements UsuarioDAO {
       st.setString(3, servidor.getEmail());
       st.setString(4, servidor.getSenhaHash());
 
-      String statusString = (servidor.getStatus() == StatusUsuario.ATIVO) ? "Ativo" : "Inativo";
-
+      String statusString = (servidor.getStatus() == StatusUsuario.ATIVO) ? "ATIVO" : "INATIVO";
       st.setString(5, statusString);
+
+      if (servidor.getPerfil() != null) {
+          st.setString(6, servidor.getPerfil().toString()); 
+      } else {
+          st.setString(6, PerfilUsuario.COMUM.toString());
+      }
+
       st.executeUpdate();
 
     } catch (SQLException e) {
@@ -103,18 +109,22 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     Usuario usuario;
 
     String idUsuario = rs.getString("idUsuario");
+    
+    String tipoUsuarioDb = rs.getString("tipoUsuario"); 
 
-    if (idUsuario.toUpperCase().startsWith("A")) {
+    if (idUsuario.toUpperCase().startsWith("A") || "ADMINISTRADOR".equals(tipoUsuarioDb)) {
       usuario = new Administrador();
       usuario.setPerfil(PerfilUsuario.ADMINISTRADOR);
 
-    } else if (idUsuario.toUpperCase().startsWith("T")) {
+    } else if (idUsuario.toUpperCase().startsWith("T") || "TECNICO".equals(tipoUsuarioDb)) {
       usuario = new Tecnico();
       usuario.setPerfil(PerfilUsuario.TECNICO);
 
     } else {
       Servidor servidor = new Servidor();
-      servidor.setLotacao(rs.getString("idSetor")); // Precisa ser ajustado depois
+
+      int idSetor = rs.getInt("idSetor");
+      servidor.setLotacao(String.valueOf(idSetor)); 
       usuario = servidor;
       usuario.setPerfil(PerfilUsuario.COMUM);
     }
@@ -125,7 +135,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     usuario.setSenhaHash(rs.getString("senha"));
 
     String statusStr = rs.getString("status");
-    StatusUsuario status = "Ativo".equalsIgnoreCase(statusStr) ? StatusUsuario.ATIVO : StatusUsuario.INATIVO;
+    StatusUsuario status = "ATIVO".equalsIgnoreCase(statusStr) ? StatusUsuario.ATIVO : StatusUsuario.INATIVO;
 
     usuario.setStatus(status);
 
@@ -133,7 +143,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
   }
 
   @Override
-  public List<Usuario> findAllTecnicos() {
+  public List<Usuario> listarTecnicos() {
     List<Usuario> tecnicos = new ArrayList<>();
     String sql = "SELECT * FROM Usuario WHERE idUsuario LIKE 'T%' AND status = 'ATIVO' ORDER BY nome";
 

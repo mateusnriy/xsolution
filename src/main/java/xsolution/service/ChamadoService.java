@@ -44,8 +44,8 @@ public class ChamadoService {
                     + ". Apenas equipamentos 'EM USO' podem receber chamados.");
         }
 
-        chamado.setStatus(StatusChamado.ABERTO); // Status inicial
-        chamado.setDataAbertura(LocalDateTime.now()); // Data atual
+        chamado.setStatus(StatusChamado.ABERTO); 
+        chamado.setDataAbertura(LocalDateTime.now());
         chamado.setDataFechamento(null); // Garantir que não nasça fechado
 
         // Adicionei a lógica para gerar um protocolo utilizando o formato:

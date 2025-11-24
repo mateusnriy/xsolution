@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -38,49 +39,35 @@ import xsolution.utils.AlertUtils;
 
 public class GestaoChamadosController implements Initializable {
 
-    @FXML
-    private TextField filterProtocolo;
-    @FXML
-    private ComboBox<StatusChamado> filterStatus;
-    @FXML
-    private DatePicker filterDataInicio;
-    @FXML
-    private TableView<Chamado> chamadosTable;
-    @FXML 
-    private ProgressIndicator loadingIndicator;
-    @FXML
-    private Button btnFiltrar;
-    @FXML
-    private Button btnLimparFiltros;
-    @FXML
-    private Button btnRelatorio;
-    @FXML
-    private TableColumn<Chamado, String> colProtocolo;
-    @FXML
-    private TableColumn<Chamado, String> colTitulo;
-    @FXML
-    private TableColumn<Chamado, String> colStatus;
-    @FXML
-    private TableColumn<Chamado, String> colSolicitante;
-    @FXML
-    private TableColumn<Chamado, String> colTecnico;
-    @FXML
-    private TableColumn<Chamado, String> colDataAbertura;
+    @FXML private TextField filterProtocolo;
+    @FXML private ComboBox<StatusChamado> filterStatus;
+    @FXML private DatePicker filterDataInicio;
+    @FXML private TableView<Chamado> chamadosTable;
+    @FXML private ProgressIndicator loadingIndicator;
+    @FXML private Button btnFiltrar;
+    @FXML private Button btnLimparFiltros;
+    @FXML private Button btnRelatorio;
+    
+    @FXML private TableColumn<Chamado, String> colProtocolo;
+    @FXML private TableColumn<Chamado, String> colTitulo;
+    @FXML private TableColumn<Chamado, String> colStatus;
+    @FXML private TableColumn<Chamado, String> colSolicitante;
+    @FXML private TableColumn<Chamado, String> colTecnico;
+    @FXML private TableColumn<Chamado, String> colDataAbertura;
 
     private ChamadoService chamadoService;
     private ObservableList<Chamado> listaChamados; // Lista exibida na tabela
-    private List<Chamado> todosOsChamadosCache; // Cache para filtro
+    private List<Chamado> todosOsChamadosCache; // Cache para filtro em memória
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         this.chamadoService = new ChamadoService();
         this.listaChamados = FXCollections.observableArrayList();
         this.todosOsChamadosCache = new ArrayList<>();
 
-        ConfigurarTabela();
-        ConfigurarFiltros();
-        CarregarDados();
+        configurarTabela();
+        configurarFiltros();
+        carregarDados();
 
         chamadosTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && chamadosTable.getSelectionModel().getSelectedItem() != null) {
@@ -89,7 +76,7 @@ public class GestaoChamadosController implements Initializable {
         });
     }
 
-    private void CarregarDados() {
+    private void carregarDados() {
         loadingIndicator.setVisible(true);
         chamadosTable.setOpacity(0.5);
         
@@ -125,8 +112,7 @@ public class GestaoChamadosController implements Initializable {
         thread.start();
     }
 
-    private void ConfigurarTabela() {
-
+    private void configurarTabela() {
         colProtocolo.setCellValueFactory(new PropertyValueFactory<>("protocolo"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
 
@@ -159,16 +145,16 @@ public class GestaoChamadosController implements Initializable {
         chamadosTable.setItems(listaChamados);
     }
 
-    private void ConfigurarFiltros() {
+    private void configurarFiltros() {
         filterStatus.setItems(FXCollections.observableArrayList(StatusChamado.values()));
     }
 
     @FXML
-    public void handleFiltrar() {
+    public void handleFilter(ActionEvent event) {
         try {
-
             if (todosOsChamadosCache.isEmpty()) {
-                CarregarDados();
+                carregarDados();
+                return;
             }
 
             List<Chamado> filtrados = todosOsChamadosCache.stream()
@@ -176,7 +162,6 @@ public class GestaoChamadosController implements Initializable {
                         if (filterProtocolo.getText() != null && !filterProtocolo.getText().trim().isEmpty()) {
                             String filtroTexto = filterProtocolo.getText().toLowerCase().trim();
                             String protocoloChamado = c.getProtocolo() != null ? c.getProtocolo().toLowerCase() : "";
-
                             if (!protocoloChamado.contains(filtroTexto)) {
                                 return false;
                             }
@@ -205,16 +190,17 @@ public class GestaoChamadosController implements Initializable {
             listaChamados.setAll(filtrados);
 
             if (filtrados.isEmpty()) {
-                AlertUtils.showInfo("Filtro", "Nenhum chamado encontrado com esses critérios.");
+                System.out.println("Filtro aplicado: Nenhum registro encontrado.");
             }
 
         } catch (Exception e) {
             AlertUtils.showError("Erro ao filtrar", e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @FXML
-    public void handleLimparFiltros() {
+    public void handleLimparFiltros(ActionEvent event) {
         filterProtocolo.clear();
         filterStatus.getSelectionModel().clearSelection();
         filterStatus.setValue(null);
@@ -228,7 +214,6 @@ public class GestaoChamadosController implements Initializable {
             Parent root = loader.load();
 
             DetalhesChamadoController controller = loader.getController();
-
             controller.setChamado(chamadoSelecionado);
 
             Stage stage = new Stage();
@@ -238,7 +223,7 @@ public class GestaoChamadosController implements Initializable {
             stage.showAndWait();
 
             if (controller.isSalvou()) {
-                CarregarDados();
+                carregarDados();
             }
 
         } catch (IOException e) {
@@ -248,7 +233,7 @@ public class GestaoChamadosController implements Initializable {
     }
 
     @FXML
-    public void handleGerarRelatorio() {
+    public void handleGerarRelatorio(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Salvar Relatório");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivos CSV", "*.csv"));
@@ -257,9 +242,9 @@ public class GestaoChamadosController implements Initializable {
         File file = fileChooser.showSaveDialog(chamadosTable.getScene().getWindow());
 
         if (file != null) {
-            try (PrintWriter writer = new PrintWriter(file)) {
+            try (PrintWriter writer = new PrintWriter(file, "UTF-8")) { 
                 StringBuilder sb = new StringBuilder();
-
+                sb.append('\ufeff'); 
                 sb.append("Protocolo;Titulo;Status;Data Abertura;Solicitante;Tecnico\n");
 
                 for (Chamado c : chamadosTable.getItems()) {

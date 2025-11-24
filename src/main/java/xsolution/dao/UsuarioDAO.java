@@ -12,5 +12,5 @@ public interface UsuarioDAO {
 
     String gerarProximoIdServidor();
 
-    List<Usuario> findAllTecnicos();
+    List<Usuario> listarTecnicos();
 }

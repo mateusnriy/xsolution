@@ -1,5 +1,7 @@
 package xsolution.service;
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 import xsolution.dao.UsuarioDAO;
 import xsolution.dao.UsuarioDAOImpl;
@@ -24,7 +26,6 @@ public class UsuarioService {
 
     String senhaHash = BCrypt.hashpw(senhaPura, BCrypt.gensalt());
 
-    // DAO gera o próximo ID (checar depois a questão do prefixo)
     String novoId = usuarioDAO.gerarProximoIdServidor();
 
     Servidor novoServidor = new Servidor();
@@ -60,5 +61,13 @@ public class UsuarioService {
     }
 
     return null;
+  }
+
+  public List<Usuario> listarTecnico() {
+    List<Usuario> tecnicos = usuarioDAO.listarTecnicos();
+    tecnicos.forEach(tec -> {
+      System.out.println("ID: " + tec.getId() + ", Nome: " + tec.getNome() + ", Email: " + tec.getEmail());
+    });
+    return tecnicos;
   }
 }

@@ -13,9 +13,6 @@ public class DB {
 
     private static Connection conn = null;
 
-    /**
-     * Carrega as propriedades do arquivo db.properties
-     */
     private static Properties loadProperties() {
         try (InputStream input = DB.class.getClassLoader().getResourceAsStream("db.properties")) {
             Properties props = new Properties();
@@ -30,9 +27,6 @@ public class DB {
         }
     }
 
-    /**
-     * Obtém uma NOVA conexão com o banco de dados.
-     */
     public static Connection getConnection() {
         Properties props = loadProperties();
         
@@ -40,16 +34,12 @@ public class DB {
             return null;
         }
 
-        // Extrai e limpa aspas extras caso existam (proteção contra erro comum)
         String url = props.getProperty("db.url").replace("\"", "").trim();
         String user = props.getProperty("db.user").replace("\"", "").trim();
         String pass = props.getProperty("db.password").replace("\"", "").trim();
 
         try {
-            // 1. Forçar o carregamento do Driver (Essencial em alguns ambientes JavaFX)
             Class.forName("org.postgresql.Driver");
-
-            // 2. Conectar passando user e pass explicitamente
             return DriverManager.getConnection(url, user, pass);
 
         } catch (ClassNotFoundException e) {
