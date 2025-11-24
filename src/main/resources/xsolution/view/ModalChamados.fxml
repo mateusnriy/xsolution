@@ -24,7 +24,7 @@
 
     <Separator/>
 
-    <Label text="Status (Ciclo de Vida):" styleClass="label-subheader"/>
+    <Label text="Status" styleClass="label-subheader"/>
     <ComboBox fx:id="cbStatus" prefWidth="400"/>
 
     <Label text="Técnico Responsável:" styleClass="label-subheader"/>

@@ -11,53 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xsolution.db.DB;
+import xsolution.exception.DbException;
 import xsolution.model.entity.Chamado;
 import xsolution.model.entity.Equipamento;
 import xsolution.model.entity.Servidor;
 import xsolution.model.entity.Tecnico;
+import xsolution.model.entity.Usuario;
 import xsolution.model.enums.StatusChamado;
 import xsolution.model.enums.TipoEquipamento;
 
 public class ChamadoDAOImpl implements ChamadoDAO {
 
-    public void create(Chamado chamado) {
-        String sql = "INSERT INTO Chamado (protocolo, titulo, descricao, status, dataAbertura, idUsuarioCriador, idEquipamento) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = DB.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            pstmt.setString(1, chamado.getProtocolo());
-            pstmt.setString(2, chamado.getTitulo());
-            pstmt.setString(3, chamado.getDescricao());
-            pstmt.setString(4, chamado.getStatus().toString());
-            pstmt.setTimestamp(5, Timestamp.valueOf(chamado.getDataAbertura()));
-
-            if (chamado.getSolicitante() != null) {
-                pstmt.setString(6, chamado.getSolicitante().getId());
-            } else {
-                throw new SQLException("É obrigatório informar o Solicitante para abrir um chamado.");
-            }
-
-            if (chamado.getEquipamento() != null) {
-                pstmt.setInt(7, chamado.getEquipamento().getId());
-            } else {
-                pstmt.setNull(7, Types.INTEGER);
-            }
-
-            pstmt.executeUpdate();
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    chamado.setId(generatedKeys.getInt(1));
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao criar chamado: " + e.getMessage(), e);
-        }
-    }
-
-    public List<Chamado> findAll() {
+    @Override
+    public List<Chamado> listarChamados() {
         List<Chamado> chamados = new ArrayList<>();
         String sql = "SELECT " +
                 "c.idChamado, c.protocolo, c.titulo, c.descricao, c.status, c.dataAbertura, c.dataFechamento, " +
@@ -76,18 +42,20 @@ public class ChamadoDAOImpl implements ChamadoDAO {
                 ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                Chamado chamado = mapResultSetToChamado(rs);
+                Chamado chamado = mapeamentoChamado(rs);
                 chamados.add(chamado);
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar chamados: " + e.getMessage(), e);
+            throw new DbException("Erro ao buscar chamados: " + e.getMessage(), e);
         }
 
         return chamados;
     }
 
-    public Chamado findById(int id) {
+    @Override
+    public List<Chamado> listarPorSolicitante(Usuario solicitante) {
+        List<Chamado> chamados = new ArrayList<>();
         String sql = "SELECT " +
                 "c.idChamado, c.protocolo, c.titulo, c.descricao, c.status, c.dataAbertura, c.dataFechamento, " +
                 "u_criador.idUsuario AS id_solicitante, u_criador.nome AS nome_solicitante, u_criador.email AS email_solicitante, " +
@@ -97,55 +65,28 @@ public class ChamadoDAOImpl implements ChamadoDAO {
                 "LEFT JOIN Usuario u_criador ON c.idUsuarioCriador = u_criador.idUsuario " +
                 "LEFT JOIN Usuario u_tec ON c.idUsuarioResponsavel = u_tec.idUsuario " +
                 "LEFT JOIN Equipamento e ON c.idEquipamento = e.idEquipamento " +
-                "WHERE c.idChamado = ?";
-
+                "WHERE c.idUsuarioCriador = ? " +
+                "ORDER BY c.dataAbertura DESC";
+        
         try (Connection conn = DB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setInt(1, id);
+            String idSolicitante = solicitante.getId();
+            pstmt.setString(1, idSolicitante);
             
             try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToChamado(rs);
+                while (rs.next()) {
+                    Chamado chamado = mapeamentoChamado(rs);
+                    chamados.add(chamado);
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar chamado por ID: " + e.getMessage(), e);
+            throw new DbException("Erro ao buscar chamados por solicitante: " + e.getMessage(), e);
         }
-        
-        return null;
-    }
-        
-    public void update(Chamado chamado) {
-        String sql = "UPDATE Chamado SET status = ?, idUsuarioResponsavel = ?, dataFechamento = ? WHERE idChamado = ?";
-        
-        try (Connection conn = DB.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, chamado.getStatus().toString());
-            
-            if (chamado.getTecnicoResponsavel() != null) {
-                pstmt.setString(2, chamado.getTecnicoResponsavel().getId());
-            } else {
-                pstmt.setNull(2, Types.VARCHAR);
-            }
-
-            if (chamado.getDataFechamento() != null) {
-                pstmt.setTimestamp(3, Timestamp.valueOf(chamado.getDataFechamento()));
-            } else {
-                pstmt.setNull(3, Types.TIMESTAMP);
-            }
-
-            pstmt.setInt(4, chamado.getId());
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar chamado: " + e.getMessage(), e);
-        }
+        return chamados;
     }
 
-    public List<Chamado> findByFilters(String titulo, StatusChamado status, java.sql.Timestamp dataAbertura) {
+    public List<Chamado> listarPorFiltros(String titulo, StatusChamado status, java.sql.Timestamp dataAbertura) {
         List<Chamado> chamados = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "SELECT c.idChamado, c.protocolo, c.titulo, c.descricao, c.status, c.dataAbertura, c.dataFechamento, " +
@@ -192,18 +133,86 @@ public class ChamadoDAOImpl implements ChamadoDAO {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    Chamado chamado = mapResultSetToChamado(rs);
+                    Chamado chamado = mapeamentoChamado(rs);
                     chamados.add(chamado);
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar chamados por filtros: " + e.getMessage(), e);
+            throw new DbException("Erro ao buscar chamados por filtros: " + e.getMessage(), e);
         }
 
         return chamados;
     }
 
-    private Chamado mapResultSetToChamado(ResultSet rs) throws SQLException {
+    @Override
+    public void criar(Chamado chamado) {
+        String sql = "INSERT INTO Chamado (protocolo, titulo, descricao, status, dataAbertura, idUsuarioCriador, idEquipamento) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DB.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setString(1, chamado.getProtocolo());
+            pstmt.setString(2, chamado.getTitulo());
+            pstmt.setString(3, chamado.getDescricao());
+            pstmt.setString(4, chamado.getStatus().toString());
+            pstmt.setTimestamp(5, Timestamp.valueOf(chamado.getDataAbertura()));
+
+            if (chamado.getSolicitante() != null) {
+                pstmt.setString(6, chamado.getSolicitante().getId());
+            } else {
+                throw new SQLException("É obrigatório informar o Solicitante para abrir um chamado.");
+            }
+
+            if (chamado.getEquipamento() != null) {
+                pstmt.setInt(7, chamado.getEquipamento().getId());
+            } else {
+                pstmt.setNull(7, Types.INTEGER);
+            }
+
+            pstmt.executeUpdate();
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    chamado.setId(generatedKeys.getInt(1));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DbException("Erro ao criar chamado: " + e.getMessage(), e);
+        }
+    }
+      
+    @Override
+    public void atualizar(Chamado chamado) {
+        String sql = "UPDATE Chamado SET status = ?, idUsuarioResponsavel = ?, dataFechamento = ? WHERE idChamado = ?";
+        
+        try (Connection conn = DB.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, chamado.getStatus().toString());
+            
+            if (chamado.getTecnicoResponsavel() != null) {
+                pstmt.setString(2, chamado.getTecnicoResponsavel().getId());
+            } else {
+                pstmt.setNull(2, Types.VARCHAR);
+            }
+
+            if (chamado.getDataFechamento() != null) {
+                pstmt.setTimestamp(3, Timestamp.valueOf(chamado.getDataFechamento()));
+            } else {
+                pstmt.setNull(3, Types.TIMESTAMP);
+            }
+
+            pstmt.setInt(4, chamado.getId());
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DbException("Erro ao atualizar chamado: " + e.getMessage(), e);
+        }
+    }
+
+    private Chamado mapeamentoChamado(ResultSet rs) throws SQLException {
         Chamado chamado = new Chamado();
         chamado.setId(rs.getInt("idChamado"));
         chamado.setProtocolo(rs.getString("protocolo"));

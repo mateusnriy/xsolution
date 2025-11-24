@@ -5,7 +5,7 @@ import java.util.List;
 
 import xsolution.dao.ChamadoDAO;
 import xsolution.dao.ChamadoDAOImpl;
-import xsolution.exception.NegocioException;
+import xsolution.exception.DbException;
 import xsolution.model.entity.Chamado;
 import xsolution.model.entity.Equipamento;
 import xsolution.model.entity.Usuario;
@@ -24,51 +24,53 @@ public class ChamadoService {
     public void abrirChamado(Chamado chamado) {
 
         if (chamado.getTitulo() == null || chamado.getTitulo().trim().isEmpty()) {
-            throw new NegocioException("O título do chamado é obrigatório.");
+            throw new DbException("O título do chamado é obrigatório.");
         }
         if (chamado.getDescricao() == null || chamado.getDescricao().trim().isEmpty()) {
-            throw new NegocioException("A descrição do chamado é obrigatória.");
+            throw new DbException("A descrição do chamado é obrigatória.");
         }
         if (chamado.getSolicitante() == null) {
-            throw new NegocioException("O chamado deve ter um solicitante vinculado.");
+            throw new DbException("O chamado deve ter um solicitante vinculado.");
         }
 
         Equipamento equipamento = chamado.getEquipamento();
         if (equipamento == null) {
-            throw new NegocioException("É obrigatório selecionar um equipamento.");
+            throw new DbException("É obrigatório selecionar um equipamento.");
         }
 
         if (equipamento.getStatus() != StatusEquipamento.EM_USO) {
-            throw new NegocioException("Não é possível abrir chamado para este equipamento. " +
+            throw new DbException("Não é possível abrir chamado para este equipamento. " +
                     "Status atual: " + equipamento.getStatus()
-                    + ". Apenas equipamentos 'EM_USO' podem receber chamados.");
+                    + ". Apenas equipamentos 'EM USO' podem receber chamados.");
         }
 
-        chamado.setStatus(StatusChamado.ABERTO); // Status inicial
-        chamado.setDataAbertura(LocalDateTime.now()); // Data atual
-        chamado.setDataFechamento(null); // Garantir que não nasça fechado
-
+        chamado.setStatus(StatusChamado.ABERTO); 
+        chamado.setDataAbertura(LocalDateTime.now());
+        chamado.setDataFechamento(null); 
+        // aqui adicionei a lógica para gerar um protocolo utilizando o seguinte formato: ANO-MES-DIA-HORA-MINUTO-SEGUNDO + número aleatório
         if (chamado.getProtocolo() == null || chamado.getProtocolo().isEmpty()) {
-            String protocoloGerado = String.format("%tY%<tm%<td-%<tH%<tM%<tS", LocalDateTime.now());
+            LocalDateTime agora = LocalDateTime.now();
+            int randomSuffix = 100 + (int) (Math.random() * 900);
+            String protocoloGerado = String.format("%tY%<tm%<td-%<tH%<tM%<tS-%d", agora, randomSuffix);
             chamado.setProtocolo(protocoloGerado);
         }
-
-        chamadoDAO.create(chamado);
+        
+        chamadoDAO.criar(chamado);
     }
 
     public List<Chamado> listarTodos() {
-        return chamadoDAO.findAll();
+        return chamadoDAO.listarChamados();
     }
 
     public void atualizarStatus(Chamado chamado, StatusChamado novoStatus) {
         if (chamado == null || novoStatus == null) {
-            throw new NegocioException("Chamado e novo status são obrigatórios.");
+            throw new DbException("Chamado e novo status são obrigatórios.");
         }
 
         StatusChamado statusAtual = chamado.getStatus();
 
         if (statusAtual == StatusChamado.CONCLUIDO || statusAtual == StatusChamado.CANCELADO) {
-            throw new NegocioException("O chamado está " + statusAtual + " e não pode ser alterado.");
+            throw new DbException("O chamado está " + statusAtual + " e não pode ser alterado.");
         }
 
         chamado.setStatus(novoStatus);
@@ -79,16 +81,16 @@ public class ChamadoService {
             chamado.setDataFechamento(null);
         }
 
-        chamadoDAO.update(chamado);
+        chamadoDAO.atualizar(chamado);
     }
 
     public void designarTecnico(Chamado chamado, Usuario tecnico) {
         if (chamado == null || tecnico == null) {
-            throw new NegocioException("Chamado e Técnico são obrigatórios.");
+            throw new DbException("Chamado e Técnico são obrigatórios.");
         }
 
         if (tecnico.getPerfil() != PerfilUsuario.TECNICO && tecnico.getPerfil() != PerfilUsuario.ADMINISTRADOR) {
-            throw new NegocioException("O usuário selecionado não possui perfil de Técnico ou Administrador.");
+            throw new DbException("O usuário selecionado não possui perfil de Técnico ou Administrador.");
         }
 
         chamado.setTecnicoResponsavel(tecnico);
@@ -97,12 +99,12 @@ public class ChamadoService {
             chamado.setStatus(StatusChamado.EM_ANDAMENTO);
         }
 
-        chamadoDAO.update(chamado);
+        chamadoDAO.atualizar(chamado);
     }
 
-    public Chamado buscarPorId(Integer id) {
-        if (id == null) 
-            return null;
-        return chamadoDAO.findById(id);
+    public List<Chamado> buscarPorSolicitante(Usuario solicitante) {
+        if (solicitante == null)
+            throw new DbException("Solicitante é obrigatório para busca de chamados.");
+        return chamadoDAO.listarPorSolicitante(solicitante);
     }
 }

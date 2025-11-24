@@ -42,13 +42,12 @@ public class DB {
             return null;
         }
 
-        String url = dbUrl.replace("\"", "").trim();
-        String user = dbUser.replace("\"", "").trim();
-        String pass = dbPass.replace("\"", "").trim();
+        String url = props.getProperty("db.url").replace("\"", "").trim();
+        String user = props.getProperty("db.user").replace("\"", "").trim();
+        String pass = props.getProperty("db.password").replace("\"", "").trim();
 
         try {
             Class.forName("org.postgresql.Driver");
-
             return DriverManager.getConnection(url, user, pass);
 
         } catch (ClassNotFoundException e) {

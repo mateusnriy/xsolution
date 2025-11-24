@@ -6,12 +6,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import xsolution.dao.UsuarioDAOImpl;
-import xsolution.db.DB;
 import xsolution.model.entity.Chamado;
 import xsolution.model.entity.Usuario;
 import xsolution.model.enums.StatusChamado;
 import xsolution.service.ChamadoService;
+import xsolution.service.UsuarioService;
 import xsolution.utils.AlertUtils;
 
 public class DetalhesChamadoController {
@@ -24,18 +23,18 @@ public class DetalhesChamadoController {
 
     private Chamado chamadoAtual;
     private ChamadoService chamadoService;
-    private UsuarioDAOImpl usuarioDAO;
+    private UsuarioService usuarioService;
     private boolean salvou = false;
 
     @FXML
     public void initialize() {
         this.chamadoService = new ChamadoService();
-        this.usuarioDAO = new UsuarioDAOImpl(DB.getConnection());
+        this.usuarioService = new UsuarioService();
 
         cbStatus.setItems(FXCollections.observableArrayList(StatusChamado.values()));
         
         try {
-            cbTecnico.setItems(FXCollections.observableArrayList(usuarioDAO.findAllTecnicos()));
+            cbTecnico.setItems(FXCollections.observableArrayList(usuarioService.listarTecnico()));
         } catch (Exception e) {
             AlertUtils.showError("Erro", "Não foi possível carregar a lista de técnicos: " + e.getMessage());
             e.printStackTrace();
