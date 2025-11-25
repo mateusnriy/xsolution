@@ -29,11 +29,11 @@
          <children>
             <TextField fx:id="filterProtocolo" prefWidth="150.0" promptText="Protocolo" styleClass="text-field" />
             <ComboBox fx:id="filterStatus" prefWidth="150.0" promptText="Status" styleClass="combo-box" />
-            <DatePicker fx:id="filterDataInicio" prefWidth="150.0" promptText="Data Abertura" styleClass="date-picker" />
-            
+            <DatePicker fx:id="filterDataInicio" prefWidth="180.0" promptText="Data Abertura" styleClass="date-picker" />
+
             <Button fx:id="btnFiltrar" mnemonicParsing="false" onAction="#handleFilter" text="Filtrar" />
-            <Button fx:id="btnLimparFiltros" mnemonicParsing="false" onAction="#handleLimparFiltros" text="Limpar" />
-            <Button fx:id="btnRelatorio" mnemonicParsing="false" onAction="#handleGerarRelatorio" text="Relatório" />
+            <Button fx:id="btnLimparFiltros" styleClass="button-clear" mnemonicParsing="false" onAction="#handleLimparFiltros" text="Limpar" />
+            <Button fx:id="btnRelatorio" styleClass="button-info" mnemonicParsing="false" onAction="#handleGerarRelatorio" text="Relatório" />
          </children>
       </HBox>
       
