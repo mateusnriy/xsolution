@@ -7,7 +7,7 @@
            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
            fx:controller="xsolution.controller.CriarUsuarioController">
    <children>
-      <VBox alignment="CENTER" maxWidth="400.0" spacing="15.0" styleClass="card">
+      <VBox alignment="CENTER" maxWidth="400.0" maxHeight="500.0" spacing="15.0" styleClass="card">
          <children>
             <Label styleClass="label-subheader" text="Criar Conta">
                <VBox.margin><Insets bottom="10.0" /></VBox.margin>

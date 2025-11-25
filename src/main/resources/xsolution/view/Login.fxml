@@ -9,25 +9,20 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" 
-   stylesheets="xsolution/view/style.css" 
-   xmlns="http://javafx.com/javafx/21" 
-   xmlns:fx="http://javafx.com/fxml/1" 
-   fx:controller="xsolution.controller.LoginController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" stylesheets="xsolution/view/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="xsolution.controller.LoginController">
    <children>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="250.0" prefWidth="300.0" spacing="5.0" styleClass="card">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" styleClass="label-subheader" text="Login" textAlignment="CENTER" />
-            <Label alignment="BOTTOM_LEFT" text="E-mail">
+            <Label text="E-mail">
                <VBox.margin>
-                  <Insets right="150.0" />
+                  <Insets right="200.0" />
                </VBox.margin>
             </Label>
             <TextField id="emailField" fx:id="emailField" />
             <Label alignment="BOTTOM_LEFT" text="Senha">
                <VBox.margin>
-                  <Insets right="150.0" />
+                  <Insets right="200.0" />
                </VBox.margin>
             </Label>
             <PasswordField id="senhaField" fx:id="senhaField" />
