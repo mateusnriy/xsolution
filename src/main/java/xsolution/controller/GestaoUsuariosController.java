@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -80,6 +81,30 @@ public class GestaoUsuariosController implements Initializable {
   private void configurarFiltros() {
     filterPerfil.setItems(FXCollections.observableArrayList(PerfilUsuario.values()));
     filterStatus.setItems(FXCollections.observableArrayList(StatusUsuario.values()));
+
+    filterPerfil.setButtonCell(new ListCell<>() {
+      @Override
+      protected void updateItem(PerfilUsuario item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setText(null);
+        } else {
+          setText(item.toString());
+        }
+      }
+    });
+
+    filterStatus.setButtonCell(new ListCell<>() {
+      @Override
+      protected void updateItem(StatusUsuario item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setText(null);
+        } else {
+          setText(item.toString());
+        }
+      }
+    });
   }
 
   private void carregarDados() {
@@ -110,7 +135,11 @@ public class GestaoUsuariosController implements Initializable {
     filterNome.clear();
     filterPerfil.setValue(null);
     filterStatus.setValue(null);
+
     listaUsuariosView.setAll(todosUsuariosCache);
+
+    // Teste de remoção do foco
+    tabelaUsuarios.requestFocus();
   }
 
   private void handleEditarUsuario(Usuario usuarioSelecionado) {

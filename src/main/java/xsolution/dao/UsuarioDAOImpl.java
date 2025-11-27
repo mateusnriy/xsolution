@@ -150,7 +150,9 @@ public class UsuarioDAOImpl implements UsuarioDAO {
   @Override
   public List<Usuario> listarTecnicos() {
     List<Usuario> tecnicos = new ArrayList<>();
-    String sql = "SELECT * FROM Usuario WHERE idUsuario LIKE 'T%' AND status = 'ATIVO' ORDER BY nome";
+    // Corrigi para buscar o tipo criado na nossa tabela, antes buscava o ID que não
+    // muda ;)
+    String sql = "SELECT * FROM Usuario WHERE (tipoUsuario = 'TECNICO') AND status = 'ATIVO' ORDER BY nome";
 
     PreparedStatement st = null;
     ResultSet rs = null;
@@ -160,14 +162,8 @@ public class UsuarioDAOImpl implements UsuarioDAO {
       rs = st.executeQuery();
 
       while (rs.next()) {
-        Tecnico tecnico = new Tecnico();
-        tecnico.setId(rs.getString("idUsuario"));
-        tecnico.setNome(rs.getString("nome"));
-        tecnico.setEmail(rs.getString("email"));
-        tecnico.setPerfil(PerfilUsuario.TECNICO);
-        tecnico.setStatus(StatusUsuario.ATIVO);
-
-        tecnicos.add(tecnico);
+        Usuario u = instanciarUsuario(rs);
+        tecnicos.add(u);
       }
 
     } catch (SQLException e) {

@@ -21,7 +21,7 @@
    <children>
       <Label styleClass="label-header" text="Gestão de Usuários" />
       
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
+      <HBox alignment="CENTER" spacing="10.0">
          <children>
             <TextField fx:id="filterNome" prefWidth="200.0" promptText="Filtrar por Nome" styleClass="text-field" />
             <ComboBox fx:id="filterPerfil" prefWidth="150.0" promptText="Perfil" styleClass="combo-box" />
@@ -30,15 +30,15 @@
             <Button onAction="#handleFiltrar" text="Filtrar" styleClass="button" />
             <Button onAction="#handleLimparFiltros" text="Limpar" styleClass="button-clear" />
             
-            <Region HBox.hgrow="ALWAYS" />
-            </children>
+            <!-- <Region HBox.hgrow="ALWAYS" /> -->
+         </children>
       </HBox>
 
       <TableView fx:id="tabelaUsuarios" VBox.vgrow="ALWAYS">
         <columns>
-           <TableColumn text="ID" prefWidth="80">
+           <!-- <TableColumn text="ID" prefWidth="80">
                 <cellValueFactory><PropertyValueFactory property="id" /></cellValueFactory>
-           </TableColumn>
+           </TableColumn> -->
            <TableColumn text="Nome" prefWidth="200">
                 <cellValueFactory><PropertyValueFactory property="nome" /></cellValueFactory>
            </TableColumn>

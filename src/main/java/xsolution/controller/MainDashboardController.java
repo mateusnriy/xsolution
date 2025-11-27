@@ -9,6 +9,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+import xsolution.model.entity.Usuario;
+import xsolution.model.enums.PerfilUsuario;
 import xsolution.utils.AlertUtils;
 import xsolution.utils.Sessao;
 import xsolution.utils.ViewUtils;
@@ -17,8 +19,7 @@ public class MainDashboardController implements Initializable {
 
     @FXML
     private StackPane contentArea;
-    @FXML
-    private Button navAbrirChamadosButton;
+
     @FXML
     private Button navMeusChamadosButton;
     @FXML
@@ -30,10 +31,37 @@ public class MainDashboardController implements Initializable {
     @FXML
     private Button navLogoutButton;
 
+    // @FXML private Button navAbrirChamadosButton;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if (Sessao.getUsuarioLogado() == null) {
+        Usuario usuarioLogado = Sessao.getUsuarioLogado();
+
+        if (usuarioLogado == null) {
             System.out.println("ALERTA: Nenhum usuário na sessão.");
+            return;
+        }
+
+        aplicarPermissoes(usuarioLogado);
+    }
+
+    private void aplicarPermissoes(Usuario usuario) {
+        PerfilUsuario perfil = usuario.getPerfil();
+
+        boolean isAdmin = perfil == PerfilUsuario.ADMINISTRADOR;
+        boolean isTecnico = perfil == PerfilUsuario.TECNICO;
+
+        configurarBotao(navGestaoUsuariosButton, isAdmin);
+
+        configurarBotao(navGestaoEquipamentosButton, isAdmin || isTecnico);
+
+        configurarBotao(navGestaoChamadosButton, isAdmin || isTecnico);
+    }
+
+    private void configurarBotao(Button button, boolean visivel) {
+        if (button != null) {
+            button.setVisible(visivel);
+            button.setManaged(visivel);
         }
     }
 
@@ -73,6 +101,7 @@ public class MainDashboardController implements Initializable {
 
     @FXML
     public void handleLogout(ActionEvent event) {
+        Sessao.logout();
         ViewUtils.trocarCenaPrincipal(event, "/xsolution/view/Login.fxml", "X Solution - Login");
     }
 }

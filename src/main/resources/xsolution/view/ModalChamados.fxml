@@ -28,8 +28,11 @@
     <ComboBox fx:id="cbStatus" styleClass="text-area" prefWidth="400"/>
 
     <Label text="Técnico Responsável:" styleClass="label-subheader"/>
-    <ComboBox fx:id="cbTecnico" prefWidth="400"/>
-
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <ComboBox fx:id="cbTecnico" prefWidth="195.0"/>
+        <Button fx:id="btnAssumir" text="Assumir Chamado" onAction="#handleAssumirChamado" 
+                styleClass="button-info" visible="false" managed="false" />
+    </HBox>
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button text="Cancelar" styleClass="button-danger" onAction="#handleCancelar"/>
         <Button text="Salvar Alterações" onAction="#handleSalvar" styleClass="button"/>

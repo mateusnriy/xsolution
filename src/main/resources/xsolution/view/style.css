@@ -93,7 +93,8 @@
 .text-field,
 .password-field,
 .combo-box,
-.date-picker {
+.date-picker,
+.text-area {
     -fx-background-color: #1e293b;
     -fx-text-fill: #f1f5f9;
     -fx-prompt-text-fill: #64748b;
@@ -123,13 +124,14 @@
 }
 
 /* Correção do text-area para pegar estilização proópia */
-.text-area {
+/* .text-area {
     -fx-text-fill: #f1f5f9;
     -fx-background-color: #1e293b;
     -fx-background-radius: 5px;
     -fx-border-color: #475569;
     -fx-border-radius: 5px;
-}
+    -fx-font-size: 14px;
+} */
 
 .text-area .viewport,
 .text-area .content {
