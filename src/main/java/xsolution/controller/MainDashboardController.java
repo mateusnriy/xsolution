@@ -26,6 +26,8 @@ public class MainDashboardController implements Initializable {
     @FXML
     private Button navGestaoEquipamentosButton;
     @FXML
+    private Button navGestaoUsuariosButton;
+    @FXML
     private Button navLogoutButton;
 
     @Override
@@ -57,6 +59,11 @@ public class MainDashboardController implements Initializable {
     @FXML
     public void handleNavGestaoEquipamentos(ActionEvent event) {
         carregarTela("/xsolution/view/GestaoEquipamentos.fxml");
+    }
+
+    @FXML
+    public void handleNavGestaoUsuarios(ActionEvent event) {
+        carregarTela("/xsolution/view/GestaoUsuarios.fxml");
     }
 
     @FXML

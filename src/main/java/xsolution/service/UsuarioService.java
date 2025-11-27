@@ -13,6 +13,7 @@ import xsolution.model.entity.Servidor;
 import xsolution.model.entity.Setor;
 import xsolution.model.entity.Usuario;
 import xsolution.model.enums.StatusUsuario;
+import xsolution.utils.Sessao;
 
 public class UsuarioService {
 
@@ -81,5 +82,28 @@ public class UsuarioService {
             System.out.println("ID: " + tec.getId() + ", Nome: " + tec.getNome() + ", Email: " + tec.getEmail());
         });
         return tecnicos;
+    }
+
+    public List<Usuario> listarTodos() {
+        return usuarioDAO.listarTodos();
+    }
+
+    public void atualizarUsuario(Usuario usuario) {
+        if (usuario == null) {
+            throw new DbException("Usuário inválido.");
+        }
+        if (usuario.getNome() == null || usuario.getNome().trim().isEmpty()) {
+            throw new DbException("O nome é obrigatório.");
+        }
+        if (usuario.getEmail() == null || usuario.getEmail().trim().isEmpty()) {
+            throw new DbException("O e-mail é obrigatório.");
+        }
+
+        // Aqui a gente garante o usuário logado não desativar a si mesmo (user é burro)
+        if (usuario.getId().equals(Sessao.getUsuarioLogado().getId()) && usuario.getStatus() == StatusUsuario.INATIVO) {
+            throw new DbException("Você não pode desativar seu próprio usuário.");
+        }
+
+        usuarioDAO.atualizar(usuario);
     }
 }
