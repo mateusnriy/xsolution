@@ -139,7 +139,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         s.setNome(rs.getString("nome_setor"));
         s.setSigla(rs.getString("sigla_setor"));
       } catch (SQLException ex) {
-        
+
       }
       usuario.setSetor(s);
     }
@@ -150,7 +150,9 @@ public class UsuarioDAOImpl implements UsuarioDAO {
   @Override
   public List<Usuario> listarTecnicos() {
     List<Usuario> tecnicos = new ArrayList<>();
-    String sql = "SELECT * FROM Usuario WHERE idUsuario LIKE 'T%' AND status = 'ATIVO' ORDER BY nome";
+    // Corrigi para buscar o tipo criado na nossa tabela, antes buscava o ID que não
+    // muda ;)
+    String sql = "SELECT * FROM Usuario WHERE (tipoUsuario = 'TECNICO') AND status = 'ATIVO' ORDER BY nome";
 
     PreparedStatement st = null;
     ResultSet rs = null;
@@ -160,14 +162,8 @@ public class UsuarioDAOImpl implements UsuarioDAO {
       rs = st.executeQuery();
 
       while (rs.next()) {
-        Tecnico tecnico = new Tecnico();
-        tecnico.setId(rs.getString("idUsuario"));
-        tecnico.setNome(rs.getString("nome"));
-        tecnico.setEmail(rs.getString("email"));
-        tecnico.setPerfil(PerfilUsuario.TECNICO);
-        tecnico.setStatus(StatusUsuario.ATIVO);
-
-        tecnicos.add(tecnico);
+        Usuario u = instanciarUsuario(rs);
+        tecnicos.add(u);
       }
 
     } catch (SQLException e) {
@@ -177,5 +173,60 @@ public class UsuarioDAOImpl implements UsuarioDAO {
       DB.closeStatement(st);
     }
     return tecnicos;
+  }
+
+  @Override
+  public List<Usuario> listarTodos() {
+    List<Usuario> usuarios = new ArrayList<>();
+    // Faz JOIN com Setor para exibir o nome do setor na tabela
+    String sql = "SELECT u.*, s.nome as nome_setor, s.sigla as sigla_setor " +
+        "FROM Usuario u " +
+        "LEFT JOIN Setor s ON u.idSetor = s.idSetor " +
+        "ORDER BY u.nome";
+
+    PreparedStatement st = null;
+    ResultSet rs = null;
+    try {
+      st = conn.prepareStatement(sql);
+      rs = st.executeQuery();
+
+      while (rs.next()) {
+        usuarios.add(instanciarUsuario(rs));
+      }
+    } catch (SQLException e) {
+      throw new DbException("Erro ao listar usuários: " + e.getMessage(), e);
+    } finally {
+      DB.closeResults(rs);
+      DB.closeStatement(st);
+    }
+    return usuarios;
+  }
+
+  @Override
+  public void atualizar(Usuario usuario) {
+    String sql = "UPDATE Usuario SET nome=?, email=?, status=?, tipoUsuario=?, idSetor=? WHERE idUsuario=?";
+
+    PreparedStatement st = null;
+    try {
+      st = conn.prepareStatement(sql);
+      st.setString(1, usuario.getNome());
+      st.setString(2, usuario.getEmail());
+      st.setString(3, usuario.getStatus().toString());
+      st.setString(4, usuario.getPerfil().toString());
+
+      if (usuario.getSetor() != null) {
+        st.setInt(5, usuario.getSetor().getId());
+      } else {
+        st.setNull(5, Types.INTEGER);
+      }
+
+      st.setString(6, usuario.getId());
+
+      st.executeUpdate();
+    } catch (SQLException e) {
+      throw new DbException("Erro ao atualizar usuário: " + e.getMessage(), e);
+    } finally {
+      DB.closeStatement(st);
+    }
   }
 }

@@ -68,7 +68,7 @@
         </HBox>
 
         <HBox alignment="CENTER_RIGHT" spacing="15.0">
-            <Button mnemonicParsing="false" onAction="#handleCancelar" text="Cancelar" />
+            <Button mnemonicParsing="false" onAction="#handleCancelar" styleClass="button-danger" text="Cancelar" />
             <Button mnemonicParsing="false" onAction="#handleSalvar" styleClass="button" text="Salvar" />
             <VBox.margin>
                 <Insets top="10.0" />

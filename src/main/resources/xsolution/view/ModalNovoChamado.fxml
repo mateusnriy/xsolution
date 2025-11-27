@@ -59,7 +59,7 @@
       <HBox alignment="CENTER_RIGHT" spacing="15.0">
          <children>
             <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#handleCancelar" 
-                    style="-fx-background-color: #ccc;" text="Cancelar" textFill="BLACK" />
+                    styleClass="button-danger" text="Cancelar" textFill="BLACK" />
             <Button fx:id="btnRegistrar" defaultButton="true" mnemonicParsing="false" 
                     onAction="#handleRegistrar" styleClass="button" text="Registrar Chamado" />
          </children>

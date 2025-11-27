@@ -2,7 +2,6 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
@@ -10,7 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" 
+<BorderPane prefHeight="600.0" prefWidth="900.0" styleClass="root"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="xsolution.controller.MainDashboardController">
             
@@ -19,16 +18,17 @@
    </stylesheets>
 
    <left>
-      <VBox alignment="TOP_CENTER" prefWidth="220.0" spacing="15.0" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 1 0 0;" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefWidth="220.0" spacing="15.0" styleClass="card" 
+            BorderPane.alignment="CENTER">
          <children>
-            <Label styleClass="label-subheader" text="Menu" textFill="#555555">
+            <Label styleClass="label-subheader" text="Menu">
                <VBox.margin><Insets bottom="10.0" top="10.0" /></VBox.margin>
             </Label>
-
+            
             <Button fx:id="navMeusChamadosButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavMeusChamados" styleClass="nav-button" text="Meus Chamados" />
             <Button fx:id="navGestaoChamadosButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavGestaoChamados" styleClass="nav-button" text="Gestão de Chamados" />
             <Button fx:id="navGestaoEquipamentosButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavGestaoEquipamentos" styleClass="nav-button" text="Gestão de Equipamentos" />
-            <Button fx:id="navGestaoUsuariosButton" maxWidth="Infinity" mnemonicParsing="false" styleClass="nav-button" text="Gestão de Usuários" />
+            <Button fx:id="navGestaoUsuariosButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavGestaoUsuarios" styleClass="nav-button" text="Gestão de Usuários" />
             <Button fx:id="navMeuPerfilButton" maxWidth="Infinity" mnemonicParsing="false" styleClass="nav-button" text="Meu Perfil" />
             
             <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
@@ -38,11 +38,14 @@
          <padding>
             <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
          </padding>
+         <BorderPane.margin>
+            <Insets right="2.0" /> 
+         </BorderPane.margin>
       </VBox>
    </left>
 
    <center>
-      <StackPane fx:id="contentArea" style="-fx-background-color: #F4F7FA;" BorderPane.alignment="CENTER">
+      <StackPane fx:id="contentArea" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
@@ -50,12 +53,15 @@
    </center>
 
    <top>
-      <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="card" BorderPane.alignment="CENTER">
          <children>
             <Label styleClass="label-header" text="X Solution - Sistema de Gestão de TI">
                <HBox.margin><Insets left="20.0" /></HBox.margin>
             </Label>
          </children>
+         <BorderPane.margin>
+            <Insets bottom="2.0" />
+         </BorderPane.margin>
       </HBox>
    </top>
 </BorderPane>

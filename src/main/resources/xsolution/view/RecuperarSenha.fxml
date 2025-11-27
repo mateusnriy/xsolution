@@ -24,7 +24,7 @@
             </Label>
             <Label prefHeight="18.0" text="Digite seu e-mail para receber o link:">
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="10.0" />
                </VBox.margin>
             </Label>
             <TextField fx:id="emailField" promptText="Email" />
