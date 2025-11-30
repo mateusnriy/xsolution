@@ -33,7 +33,7 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
             st.setString(3, e.getMarca());
             st.setString(4, e.getModelo());
             st.setString(5, e.getTipo().toString());
-            st.setString(6, e.getStatus().toString());
+            st.setString(6, e.getStatus().name());
             
             if (e.getSetor() != null && e.getSetor().getId() != null) {
                 st.setInt(7, e.getSetor().getId());
@@ -77,7 +77,7 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
             st.setString(3, e.getMarca());
             st.setString(4, e.getModelo());
             st.setString(5, e.getTipo().toString());
-            st.setString(6, e.getStatus().toString());
+            st.setString(6, e.getStatus().name());
             
             if (e.getSetor() != null && e.getSetor().getId() != null) {
                 st.setInt(7, e.getSetor().getId());
