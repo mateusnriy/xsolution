@@ -13,9 +13,20 @@
    <children>
       <Label styleClass="label-header" text="Gestão de Equipamentos" />
       
-      <HBox alignment="CENTER_RIGHT" spacing="10.0">
-         <Region HBox.hgrow="ALWAYS" />
-         <Button onAction="#handleNovoEquipamento" text="+ Novo Equipamento" styleClass="button" />
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <TextField fx:id="filterBusca" promptText="Buscar por Patrimônio, Marca..." prefWidth="200.0" />
+            
+            <ComboBox fx:id="filterTipo" promptText="Tipo" prefWidth="120.0" />
+            <ComboBox fx:id="filterStatus" promptText="Status" prefWidth="120.0" />
+
+            <Button text="Filtrar" onAction="#handleFiltrar" styleClass="button" />
+            <Button text="Limpar" onAction="#handleLimparFiltros" styleClass="button-clear" />
+            
+            <Region HBox.hgrow="ALWAYS" />
+            
+            <Button onAction="#handleNovoEquipamento" text="+ Novo Equipamento" styleClass="button" />
+         </children>
       </HBox>
 
       <TableView fx:id="tabelaEquipamentos" VBox.vgrow="ALWAYS">

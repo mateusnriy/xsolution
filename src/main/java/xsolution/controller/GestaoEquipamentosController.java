@@ -2,43 +2,65 @@ package xsolution.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import xsolution.model.entity.Equipamento;
+import xsolution.model.enums.StatusEquipamento;
+import xsolution.model.enums.TipoEquipamento;
 import xsolution.service.EquipamentoService;
 import xsolution.utils.AlertUtils;
+import xsolution.utils.FilterHelper;
 
 public class GestaoEquipamentosController implements Initializable {
+
+    @FXML private TextField filterBusca;
+    @FXML private ComboBox<TipoEquipamento> filterTipo;
+    @FXML private ComboBox<StatusEquipamento> filterStatus;
 
     @FXML private TableView<Equipamento> tabelaEquipamentos;
     
     private EquipamentoService service;
+    
+    private ObservableList<Equipamento> listaEquipamentosView;
+    private List<Equipamento> todosEquipamentosCache;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources){
         try {
             this.service = new EquipamentoService();
             
+            this.listaEquipamentosView = FXCollections.observableArrayList();
+            this.todosEquipamentosCache = new ArrayList<>();
+
             if (tabelaEquipamentos == null) {
-                System.err.println("ERRO GRAVE: tabelaEquipamentos é NULL! Verifique o fx:id no FXML.");
+                System.err.println("ERRO GRAVE: tabelaEquipamentos é NULL!");
                 return;
             }
+
+            filterTipo.setItems(FXCollections.observableArrayList(TipoEquipamento.values()));
+            filterStatus.setItems(FXCollections.observableArrayList(StatusEquipamento.values()));
 
             configurarTabela();
             carregarDados();
         } catch (Exception e) {
             e.printStackTrace();
-            AlertUtils.showError("Erro de Inicialização", "Falha ao iniciar módulo de equipamentos: " + e.getMessage());
+            AlertUtils.showError("Erro de Inicialização", "Falha ao iniciar: " + e.getMessage());
         }
     }
 
@@ -50,12 +72,18 @@ public class GestaoEquipamentosController implements Initializable {
         });
     }
 
-    private void carregarDados() {
+    private void carregarDados(){
         try {
-            tabelaEquipamentos.setItems(FXCollections.observableArrayList(service.listarTodos()));
+            List<Equipamento> listaBanco = service.listarTodos();
+            
+            todosEquipamentosCache.clear();
+            todosEquipamentosCache.addAll(listaBanco);
+            listaEquipamentosView.setAll(listaBanco);
+            tabelaEquipamentos.setItems(listaEquipamentosView);
+            
         } catch (Exception e) {
             e.printStackTrace();
-            AlertUtils.showError("Erro", "Falha ao carregar equipamentos do banco.\nVerifique a conexão.\n" + e.getMessage());
+            AlertUtils.showError("Erro", "Falha ao carregar equipamentos.\n" + e.getMessage());
         }
     }
 
@@ -119,5 +147,37 @@ public class GestaoEquipamentosController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void handleFiltrar(ActionEvent event) {
+        List<Equipamento> filtrados = todosEquipamentosCache.stream()
+            .filter(e -> {
+                String busca = filterBusca.getText();
+                boolean matchTexto = true;
+                if (busca != null && !busca.isEmpty()) {
+                    matchTexto = FilterHelper.matchString(e.getNumPatrimonio(), busca) ||
+                                 FilterHelper.matchString(e.getMarca(), busca) ||
+                                 FilterHelper.matchString(e.getModelo(), busca);
+                }
+                
+                boolean matchTipo = FilterHelper.matchEquals(e.getTipo(), filterTipo.getValue());
+                
+                boolean matchStatus = FilterHelper.matchEquals(e.getStatus(), filterStatus.getValue());
+
+                return matchTexto && matchTipo && matchStatus;
+            })
+            .collect(Collectors.toList());
+
+        listaEquipamentosView.setAll(filtrados);
+    }
+
+    @FXML
+    public void handleLimparFiltros(ActionEvent event) {
+        filterBusca.clear();
+        filterTipo.setValue(null);
+        filterStatus.setValue(null);
+        
+        listaEquipamentosView.setAll(todosEquipamentosCache);
     }
 }

@@ -1,10 +1,13 @@
 package xsolution.model.enums;
 
 public enum StatusEquipamento {
-    BOM,
-    DEFEITO,
-    DESCARTE,
     EM_USO,
     EM_MANUTENCAO,
-    ESTOQUE
+    ESTOQUE,
+    BAIXA;
+
+    @Override
+    public String toString() {
+        return name().replace("_", " ");
+    }
 }
