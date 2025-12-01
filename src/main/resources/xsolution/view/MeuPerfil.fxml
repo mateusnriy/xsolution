@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox alignment="TOP_CENTER" spacing="20.0" 
+      stylesheets="@style.css" 
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="xsolution.controller.MeuPerfilController">
+
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+
+    <VBox spacing="15.0" styleClass="card" maxWidth="600.0">
+        <children>
+            <Label styleClass="label-header" text="Meu Perfil" />
+            
+            <Label text="Informações Pessoais" styleClass="label-subheader"/>
+            
+            <VBox spacing="5.0">
+                <Label text="Nome Completo" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtNome" promptText="Seu nome" />
+            </VBox>
+
+            <VBox spacing="5.0">
+                <Label text="E-mail" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtEmail" promptText="seu@email.com" />
+            </VBox>
+
+            <VBox spacing="5.0">
+                <Label text="Setor / Lotação" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtSetor" disable="true" editable="false" promptText="Setor" />
+                <Label text="* Para alterar seu setor, contate um Administrador." style="-fx-font-size: 10px; -fx-text-fill: #94a3b8;" />
+            </VBox>
+
+            <Separator opacity="0.1" />
+
+            <Label text="Segurança (Alterar Senha)" styleClass="label-subheader"/>
+            <Label text="Preencha apenas se desejar trocar sua senha." style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;" />
+
+            <VBox spacing="5.0">
+                <Label text="Senha Atual" style="-fx-font-weight: bold;"/>
+                <PasswordField fx:id="txtSenhaAtual" promptText="Digite sua senha atual para confirmar" />
+            </VBox>
+
+            <HBox spacing="15.0">
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Nova Senha" style="-fx-font-weight: bold;"/>
+                    <PasswordField fx:id="txtNovaSenha" promptText="Mínimo 8 caracteres" />
+                </VBox>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Confirmar Nova Senha" style="-fx-font-weight: bold;"/>
+                    <PasswordField fx:id="txtConfirmarSenha" promptText="Repita a nova senha" />
+                </VBox>
+            </HBox>
+
+            <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+                <Button text="Salvar Alterações" onAction="#handleSalvar" styleClass="button" />
+            </HBox>
+        </children>
+    </VBox>
+</VBox>

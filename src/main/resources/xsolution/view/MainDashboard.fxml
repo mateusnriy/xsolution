@@ -29,7 +29,7 @@
             <Button fx:id="navGestaoChamadosButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavGestaoChamados" styleClass="nav-button" text="Gestão de Chamados" />
             <Button fx:id="navGestaoEquipamentosButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavGestaoEquipamentos" styleClass="nav-button" text="Gestão de Equipamentos" />
             <Button fx:id="navGestaoUsuariosButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavGestaoUsuarios" styleClass="nav-button" text="Gestão de Usuários" />
-            <Button fx:id="navMeuPerfilButton" maxWidth="Infinity" mnemonicParsing="false" styleClass="nav-button" text="Meu Perfil" />
+            <Button fx:id="navMeuPerfilButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavMeuPerfil" styleClass="nav-button" text="Meu Perfil" />
             
             <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
                 <Button fx:id="navLogoutButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleLogout" styleClass="button-danger" text="Sair" />

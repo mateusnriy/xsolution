@@ -30,8 +30,8 @@ public class MainDashboardController implements Initializable {
     private Button navGestaoUsuariosButton;
     @FXML
     private Button navLogoutButton;
-
-    // @FXML private Button navAbrirChamadosButton;
+    @FXML
+    private Button navMeuPerfilButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -97,6 +97,11 @@ public class MainDashboardController implements Initializable {
     @FXML
     public void handleNavMeusChamados(ActionEvent event) {
         carregarTela("/xsolution/view/MeusChamados.fxml");
+    }
+
+    @FXML
+    public void handleNavMeuPerfil(ActionEvent event) {
+        carregarTela("/xsolution/view/MeuPerfil.fxml");
     }
 
     @FXML
