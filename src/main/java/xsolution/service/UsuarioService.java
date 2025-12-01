@@ -76,6 +76,35 @@ public class UsuarioService {
         return null;
     }
 
+    public void atualizarPerfil(Usuario usuario, String senhaAtual, String novaSenha, String confirmacaoSenha) {
+        atualizarUsuario(usuario);
+
+        if (novaSenha != null && !novaSenha.isBlank()) {
+
+            if (senhaAtual == null || senhaAtual.isBlank()) {
+                throw new DbException("Para alterar a senha, é necessário informar a senha atual.");
+            }
+
+            Usuario usuarioBanco = usuarioDAO.buscarPorEmail(usuario.getEmail());
+            if (!BCrypt.checkpw(senhaAtual, usuarioBanco.getSenhaHash())) {
+                throw new DbException("A senha atual está incorreta.");
+            }
+
+            if (novaSenha.length() < 8) {
+                throw new DbException("A nova senha deve ter no mínimo 8 caracteres.");
+            }
+
+            if (!novaSenha.equals(confirmacaoSenha)) {
+                throw new DbException("A nova senha e a confirmação não coincidem.");
+            }
+
+            String novoHash = BCrypt.hashpw(novaSenha, BCrypt.gensalt());
+            usuarioDAO.atualizarSenha(usuario.getId(), novoHash);
+
+            // usuario.setSenhaHash(novoHash);
+        }
+    }
+
     public List<Usuario> listarTecnico() {
         List<Usuario> tecnicos = usuarioDAO.listarTecnicos();
         tecnicos.forEach(tec -> {

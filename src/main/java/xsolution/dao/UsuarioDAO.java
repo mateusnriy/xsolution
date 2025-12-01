@@ -10,6 +10,8 @@ public interface UsuarioDAO {
 
     void atualizar(Usuario usuario);
 
+    void atualizarSenha(String idUsuario, String novaSenhaHash);
+
     List<Usuario> listarTodos();
 
     Usuario buscarPorEmail(String email);

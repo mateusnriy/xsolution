@@ -229,4 +229,20 @@ public class UsuarioDAOImpl implements UsuarioDAO {
       DB.closeStatement(st);
     }
   }
+
+  @Override
+  public void atualizarSenha(String idUsuario, String novaSenhaHash) {
+    String sql = "UPDATE Usuario SET senha=? WHERE idUsuario=?";
+    PreparedStatement st = null;
+    try {
+      st = conn.prepareStatement(sql);
+      st.setString(1, novaSenhaHash);
+      st.setString(2, idUsuario);
+      st.executeUpdate();
+    } catch (SQLException e) {
+      throw new DbException("Erro ao atualizar senha: " + e.getMessage(), e);
+    } finally {
+      DB.closeStatement(st);
+    }
+  }
 }
