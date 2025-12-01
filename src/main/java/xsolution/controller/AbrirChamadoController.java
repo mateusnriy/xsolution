@@ -1,22 +1,25 @@
 package xsolution.controller;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
-import javafx.concurrent.Task;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import xsolution.exception.DbException;
 import xsolution.model.entity.Chamado;
 import xsolution.model.entity.Equipamento;
-import xsolution.model.enums.StatusEquipamento;
 import xsolution.service.ChamadoService;
 import xsolution.service.EquipamentoService;
 import xsolution.utils.AlertUtils;
@@ -24,8 +27,7 @@ import xsolution.utils.Sessao;
 
 public class AbrirChamadoController implements Initializable {
 
-    @FXML private TextField txtPatrimonio;
-    @FXML private Button btnBuscar;
+    @FXML private ComboBox<Equipamento> cbEquipamento;
     @FXML private Label lblInfoEquipamento;
     @FXML private TextField txtTitulo;
     @FXML private TextArea txtDescricao;
@@ -34,79 +36,101 @@ public class AbrirChamadoController implements Initializable {
 
     private ChamadoService chamadoService;
     private EquipamentoService equipamentoService;
-    private Equipamento equipamentoSelecionado;
+    
+    private ObservableList<Equipamento> listaOriginal;
+    private ObservableList<Equipamento> listaFiltrada;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.chamadoService = new ChamadoService();
-        this.equipamentoService = new EquipamentoService(); 
+        this.equipamentoService = new EquipamentoService();
 
-        btnRegistrar.setDisable(true);
+        PesquisarEquipamentos();
+        carregarEquipamentos();
     }
 
-    @FXML
-    private void handleBuscarEquipamento(ActionEvent event) {
-        String patrimonio = txtPatrimonio.getText().trim();
-
-        if (patrimonio.isEmpty()) {
-            AlertUtils.showError("Atenção", "Digite o número do patrimônio.");
-            return;
+    private void carregarEquipamentos() {
+        try {
+            List<Equipamento> equipamentos = equipamentoService.listarParaNovoChamado();
+            
+            listaOriginal = FXCollections.observableArrayList(equipamentos);
+            listaFiltrada = FXCollections.observableArrayList(equipamentos);
+            
+            cbEquipamento.setItems(listaFiltrada);
+            
+        } catch (Exception e) {
+            AlertUtils.showError("Erro", "Falha ao carregar lista de equipamentos: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
 
-        lblInfoEquipamento.setText("Buscando...");
-        lblInfoEquipamento.setTextFill(Color.BLACK);
-        btnBuscar.setDisable(true);
+    private void PesquisarEquipamentos() {
 
-        Task<Equipamento> task = new Task<>() {
+        cbEquipamento.setConverter(new StringConverter<Equipamento>() {
             @Override
-            protected Equipamento call() throws Exception {
-                return equipamentoService.buscarPorPatrimonio(patrimonio);
+            public String toString(Equipamento eq) {
+                if (eq == null) return null;
+                return eq.getNumPatrimonio() + " - " + eq.getTipo() + " " + eq.getMarca() + " " + eq.getModelo();
             }
-        };
 
-        task.setOnSucceeded(e -> {
-            btnBuscar.setDisable(false);
-            Equipamento equip = task.getValue();
+            @Override
+            public Equipamento fromString(String string) {
+                return cbEquipamento.getItems().stream()
+                        .filter(e -> this.toString(e).equals(string))
+                        .findFirst().orElse(null);
+            }
+        });
 
-            if (equip == null) {
-                lblInfoEquipamento.setText("Equipamento não encontrado.");
-                lblInfoEquipamento.setTextFill(Color.RED);
-                equipamentoSelecionado = null;
-                btnRegistrar.setDisable(true);
+        cbEquipamento.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+
+            if (cbEquipamento.getSelectionModel().getSelectedItem() != null) {
+                String display = cbEquipamento.getConverter().toString(cbEquipamento.getSelectionModel().getSelectedItem());
+                if (display != null && display.equals(newValue)) {
+                    return;
+                }
+            }
+            
+            if (newValue == null || newValue.isEmpty()) {
+                listaFiltrada.setAll(listaOriginal);
             } else {
-                validarEquipamento(equip);
+                String upperVal = newValue.toUpperCase();
+                List<Equipamento> filtro = listaOriginal.stream()
+                    .filter(e -> e.getNumPatrimonio().toUpperCase().contains(upperVal) 
+                              || (e.getModelo() != null && e.getModelo().toUpperCase().contains(upperVal))
+                              || (e.getMarca() != null && e.getMarca().toUpperCase().contains(upperVal)))
+                    .collect(Collectors.toList());
+                listaFiltrada.setAll(filtro);
+            }
+            
+            if (!cbEquipamento.isShowing() && !listaFiltrada.isEmpty()) {
+                cbEquipamento.show();
             }
         });
-
-        task.setOnFailed(e -> {
-            btnBuscar.setDisable(false);
-            lblInfoEquipamento.setText("Erro ao buscar.");
-            AlertUtils.showError("Erro", "Falha na busca: " + task.getException().getMessage());
+        
+        cbEquipamento.setOnAction(e -> {
+            Equipamento selecionado = cbEquipamento.getValue();
+            if (selecionado != null) {
+                String setor = (selecionado.getSetor() != null) ? selecionado.getSetor().getNome() : "Sem Setor";
+                lblInfoEquipamento.setText("Setor: " + setor);
+            } else {
+                lblInfoEquipamento.setText("");
+            }
         });
-
-        new Thread(task).start();
-    }
-
-    private void validarEquipamento(Equipamento equip) {
-
-        if (equip.getStatus() != StatusEquipamento.EM_USO) {
-            lblInfoEquipamento.setText(equip.getTipo() + " " + equip.getModelo() + " - Status: " + equip.getStatus() + " (Indisponível)");
-            lblInfoEquipamento.setTextFill(Color.RED);
-            equipamentoSelecionado = null;
-            btnRegistrar.setDisable(true);
-        } else {
-            lblInfoEquipamento.setText("Encontrado: " + equip.getTipo() + " " + equip.getModelo());
-            lblInfoEquipamento.setTextFill(Color.GREEN);
-            equipamentoSelecionado = equip;
-            btnRegistrar.setDisable(false);
-        }
     }
 
     @FXML
     private void handleRegistrar(ActionEvent event) {
+        Equipamento equipamentoSelecionado = cbEquipamento.getValue();
+
         if (equipamentoSelecionado == null) {
-            AlertUtils.showError("Erro", "Busque e valide um equipamento primeiro.");
-            return;
+
+             String textoDigitado = cbEquipamento.getEditor().getText();
+             if (!textoDigitado.isEmpty()) {
+                 AlertUtils.showError("Equipamento Inválido", "O equipamento '" + textoDigitado + "' não foi encontrado ou não foi selecionado na lista.");
+             } else {
+                 AlertUtils.showError("Campo Obrigatório", "Por favor, selecione um equipamento.");
+             }
+             return;
         }
 
         if (txtTitulo.getText().trim().isEmpty() || txtDescricao.getText().trim().isEmpty()) {

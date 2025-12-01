@@ -11,12 +11,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import xsolution.dao.SetorDAO;
-import xsolution.dao.SetorDAOImpl;
 import xsolution.model.entity.Setor;
 import xsolution.model.entity.Usuario;
 import xsolution.model.enums.PerfilUsuario;
 import xsolution.model.enums.StatusUsuario;
+import xsolution.service.SetorService;
 import xsolution.service.UsuarioService;
 import xsolution.utils.AlertUtils;
 
@@ -34,14 +33,14 @@ public class ModalUsuarioController implements Initializable {
   private ComboBox<Setor> cbSetor;
 
   private UsuarioService service;
-  private SetorDAO setorDAO;
+  private SetorService setorService;
   private Usuario usuarioAtual;
   private boolean salvou = false;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     this.service = new UsuarioService();
-    this.setorDAO = new SetorDAOImpl();
+    this.setorService = new SetorService();
 
     cbPerfil.setItems(FXCollections.observableArrayList(PerfilUsuario.values()));
     cbStatus.setItems(FXCollections.observableArrayList(StatusUsuario.values()));
@@ -65,7 +64,7 @@ public class ModalUsuarioController implements Initializable {
     });
 
     try {
-      cbSetor.setItems(FXCollections.observableArrayList(setorDAO.findAll()));
+      cbSetor.setItems(FXCollections.observableArrayList(setorService.listarTodos()));
     } catch (Exception e) {
       e.printStackTrace();
     }

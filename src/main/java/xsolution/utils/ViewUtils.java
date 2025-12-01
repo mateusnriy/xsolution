@@ -61,7 +61,7 @@ public class ViewUtils {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
 
-            // Define quem é o "pai" da janela (opcional, mas bom para UX)
+            // Define quem é o "pai" da janela
             if (eventOwner != null && eventOwner.getSource() instanceof Node) {
                 Stage ownerStage = (Stage) ((Node) eventOwner.getSource()).getScene().getWindow();
                 stage.initOwner(ownerStage);

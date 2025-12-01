@@ -109,7 +109,7 @@ public class ChamadoDAOImpl implements ChamadoDAO {
 
         if (status != null) {
             sql.append(" AND c.status = ?");
-            params.add(status.toString());
+            params.add(status.name());
         }
 
         if (dataAbertura != null) {
@@ -154,7 +154,7 @@ public class ChamadoDAOImpl implements ChamadoDAO {
             pstmt.setString(1, chamado.getProtocolo());
             pstmt.setString(2, chamado.getTitulo());
             pstmt.setString(3, chamado.getDescricao());
-            pstmt.setString(4, chamado.getStatus().toString());
+            pstmt.setString(4, chamado.getStatus().name());
             pstmt.setTimestamp(5, Timestamp.valueOf(chamado.getDataAbertura()));
 
             if (chamado.getSolicitante() != null) {

@@ -14,9 +14,9 @@ public class EquipamentoService {
         validarCamposObrigatorios(equipamento);
 
         Equipamento existente = dao.buscarPorPatrimonio(equipamento.getNumPatrimonio());
-        
+
         if (existente != null && !existente.equals(equipamento)) {
-             throw new DbException("Já existe um equipamento com este número de patrimônio.");
+            throw new DbException("Já existe um equipamento com este número de patrimônio.");
         }
         if (equipamento.getId() == null && existente != null) {
             throw new DbException("Já existe um equipamento com este número de patrimônio.");
@@ -32,14 +32,18 @@ public class EquipamentoService {
     public List<Equipamento> listarTodos() {
         return dao.listarTodos();
     }
-    
+
+    public List<Equipamento> listarParaNovoChamado() {
+        return dao.listarDisponiveisParaChamado();
+    }
+
     public Equipamento buscarPorPatrimonio(String numPatrimonio) {
         if (numPatrimonio == null || numPatrimonio.trim().isEmpty()) {
             throw new DbException("O número do patrimônio não pode ser vazio para busca.");
         }
         return dao.buscarPorPatrimonio(numPatrimonio);
     }
-    
+
     public void remover(Equipamento equipamento) {
         if (equipamento == null || equipamento.getId() == null) {
             throw new DbException("Equipamento inválido para remoção.");

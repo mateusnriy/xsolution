@@ -21,32 +21,32 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
     @Override
     public void salvar(Equipamento e) {
         String sql = "INSERT INTO Equipamento (numPatrimonio, numSerie, marca, modelo, tipo, status, idSetor, data_aquisicao, dataCriacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         Connection conn = null;
         PreparedStatement st = null;
         try {
             conn = DB.getConnection();
             st = conn.prepareStatement(sql);
-            
+
             st.setString(1, e.getNumPatrimonio());
             st.setString(2, e.getNumSerie());
             st.setString(3, e.getMarca());
             st.setString(4, e.getModelo());
             st.setString(5, e.getTipo().toString());
             st.setString(6, e.getStatus().name());
-            
+
             if (e.getSetor() != null && e.getSetor().getId() != null) {
                 st.setInt(7, e.getSetor().getId());
             } else {
                 st.setNull(7, Types.INTEGER);
             }
-            
+
             if (e.getDataAquisicao() != null) {
                 st.setDate(8, java.sql.Date.valueOf(e.getDataAquisicao()));
             } else {
                 st.setNull(8, Types.DATE);
             }
-            
+
             if (e.getDataCriacao() != null) {
                 st.setTimestamp(9, Timestamp.valueOf(e.getDataCriacao()));
             } else {
@@ -65,32 +65,32 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
     @Override
     public void atualizar(Equipamento e) {
         String sql = "UPDATE Equipamento SET numPatrimonio=?, numSerie=?, marca=?, modelo=?, tipo=?, status=?, idSetor=?, data_aquisicao=? WHERE idEquipamento=?";
-        
+
         Connection conn = null;
         PreparedStatement st = null;
         try {
             conn = DB.getConnection();
             st = conn.prepareStatement(sql);
-            
+
             st.setString(1, e.getNumPatrimonio());
             st.setString(2, e.getNumSerie());
             st.setString(3, e.getMarca());
             st.setString(4, e.getModelo());
             st.setString(5, e.getTipo().toString());
             st.setString(6, e.getStatus().name());
-            
+
             if (e.getSetor() != null && e.getSetor().getId() != null) {
                 st.setInt(7, e.getSetor().getId());
             } else {
                 st.setNull(7, Types.INTEGER);
             }
-            
+
             if (e.getDataAquisicao() != null) {
                 st.setDate(8, java.sql.Date.valueOf(e.getDataAquisicao()));
             } else {
                 st.setNull(8, Types.DATE);
             }
-            
+
             st.setInt(9, e.getId());
 
             st.executeUpdate();
@@ -124,10 +124,10 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
     public List<Equipamento> listarTodos() {
         // JOIN IMPORTANTE: Traz os dados do Setor junto com o equipamento
         String sql = "SELECT e.*, s.nome AS setor_nome, s.sigla AS setor_sigla " +
-                     "FROM Equipamento e " +
-                     "LEFT JOIN Setor s ON e.idSetor = s.idSetor " +
-                     "ORDER BY e.marca, e.modelo";
-        
+                "FROM Equipamento e " +
+                "LEFT JOIN Setor s ON e.idSetor = s.idSetor " +
+                "ORDER BY e.marca, e.modelo";
+
         List<Equipamento> lista = new ArrayList<>();
         Connection conn = null;
         PreparedStatement st = null;
@@ -150,12 +150,42 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
     }
 
     @Override
+    public List<Equipamento> listarDisponiveisParaChamado() {
+        
+        String sql = "SELECT e.*, s.nome AS setor_nome, s.sigla AS setor_sigla " +
+                "FROM Equipamento e " +
+                "LEFT JOIN Setor s ON e.idSetor = s.idSetor " +
+                "WHERE e.status = 'EM_USO' " +
+                "ORDER BY e.numPatrimonio";
+
+        List<Equipamento> lista = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try {
+            conn = DB.getConnection();
+            st = conn.prepareStatement(sql);
+            rs = st.executeQuery();
+            while (rs.next()) {
+                lista.add(instanciarEquipamento(rs));
+            }
+        } catch (SQLException x) {
+            throw new DbException("Erro ao listar equipamentos disponíveis: " + x.getMessage(), x);
+        } finally {
+            DB.closeResults(rs);
+            DB.closeStatement(st);
+            DB.closeConnection(conn);
+        }
+        return lista;
+    }
+
+    @Override
     public Equipamento buscarPorPatrimonio(String numPatrimonio) {
         String sql = "SELECT e.*, s.nome AS setor_nome, s.sigla AS setor_sigla " +
-                     "FROM Equipamento e " +
-                     "LEFT JOIN Setor s ON e.idSetor = s.idSetor " +
-                     "WHERE e.numPatrimonio = ?";
-        
+                "FROM Equipamento e " +
+                "LEFT JOIN Setor s ON e.idSetor = s.idSetor " +
+                "WHERE e.numPatrimonio = ?";
+
         Connection conn = null;
         PreparedStatement st = null;
         ResultSet rs = null;
@@ -180,10 +210,10 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
     @Override
     public Equipamento buscarPorId(int id) {
         String sql = "SELECT e.*, s.nome AS setor_nome, s.sigla AS setor_sigla " +
-                     "FROM Equipamento e " +
-                     "LEFT JOIN Setor s ON e.idSetor = s.idSetor " +
-                     "WHERE e.idEquipamento = ?";
-        
+                "FROM Equipamento e " +
+                "LEFT JOIN Setor s ON e.idSetor = s.idSetor " +
+                "WHERE e.idEquipamento = ?";
+
         Connection conn = null;
         PreparedStatement st = null;
         ResultSet rs = null;
@@ -212,24 +242,26 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
         e.setNumSerie(rs.getString("numSerie"));
         e.setMarca(rs.getString("marca"));
         e.setModelo(rs.getString("modelo"));
-        
+
         java.sql.Date dtAquisicao = rs.getDate("data_aquisicao");
         if (dtAquisicao != null) {
             e.setDataAquisicao(dtAquisicao.toLocalDate());
         }
-        
+
         Timestamp tsCriacao = rs.getTimestamp("dataCriacao");
         if (tsCriacao != null) {
             e.setDataCriacao(tsCriacao.toLocalDateTime());
         }
-        
+
         try {
             String tipoStr = rs.getString("tipo");
-            if (tipoStr != null) e.setTipo(TipoEquipamento.valueOf(tipoStr));
-            
+            if (tipoStr != null)
+                e.setTipo(TipoEquipamento.valueOf(tipoStr));
+
             String statusStr = rs.getString("status");
-            if (statusStr != null) e.setStatus(StatusEquipamento.valueOf(statusStr));
-            
+            if (statusStr != null)
+                e.setStatus(StatusEquipamento.valueOf(statusStr));
+
             int idSetor = rs.getInt("idSetor");
             if (!rs.wasNull() && idSetor > 0) {
                 Setor setor = new Setor();
@@ -242,11 +274,11 @@ public class EquipamentoDAOImpl implements EquipamentoDAO {
                 }
                 e.setSetor(setor);
             }
-            
+
         } catch (IllegalArgumentException ex) {
             System.err.println("Erro de conversão de dados: " + ex.getMessage());
         }
-        
+
         return e;
     }
 }

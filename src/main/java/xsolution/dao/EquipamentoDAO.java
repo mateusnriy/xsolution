@@ -8,6 +8,8 @@ public interface EquipamentoDAO {
     void atualizar(Equipamento equipamento);
     void deletar(int id);
     List<Equipamento> listarTodos();
+    List<Equipamento> listarDisponiveisParaChamado();
     Equipamento buscarPorPatrimonio(String numPatrimonio);
     Equipamento buscarPorId(int id);
+
 }

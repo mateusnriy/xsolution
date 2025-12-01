@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
 
 <VBox alignment="TOP_CENTER" 
       maxHeight="Infinity" maxWidth="Infinity" 
@@ -28,19 +29,12 @@
       <VBox alignment="CENTER_LEFT" spacing="5.0" maxWidth="Infinity">
          <children>
             <Label styleClass="label-subheader" text="Patrimônio do Equipamento" />
-            
-            <HBox spacing="10.0" maxWidth="Infinity">
-               <children>
-                  <TextField fx:id="txtPatrimonio" promptText="Ex: PAT-100" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                  <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#handleBuscarEquipamento" text="Buscar" minWidth="80.0"/>
-               </children>
-            </HBox>
-           
+            <ComboBox fx:id="cbEquipamento" editable="true" maxWidth="Infinity" promptText="Digite para filtrar..." />
             <Label fx:id="lblInfoEquipamento" textFill="#666666" wrapText="true" maxWidth="Infinity"/>
          </children>
       </VBox>
 
-      <VBox alignment="CENTER_LEFT" spacing="5.0" maxWidth="Infinity">
+      <VBox alignment="CENTER_LEFT" spacing="5.0" maxWidth="Infinity">  
          <children>
             <Label styleClass="label-subheader" text="Título do Problema" />
             <TextField fx:id="txtTitulo" promptText="Resumo curto (Ex: PC não liga)" maxWidth="Infinity"/>

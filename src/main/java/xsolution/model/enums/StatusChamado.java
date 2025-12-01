@@ -5,5 +5,10 @@ public enum StatusChamado {
     EM_ANDAMENTO,
     PENDENTE,   
     CONCLUIDO,    
-    CANCELADO
+    CANCELADO;
+
+    @Override
+    public String toString() {
+        return name().replace("_", " ");
+    }
 }

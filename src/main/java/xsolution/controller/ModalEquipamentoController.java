@@ -15,13 +15,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import xsolution.dao.SetorDAO;
-import xsolution.dao.SetorDAOImpl;
 import xsolution.model.entity.Equipamento;
 import xsolution.model.entity.Setor;
 import xsolution.model.enums.StatusEquipamento;
 import xsolution.model.enums.TipoEquipamento;
 import xsolution.service.EquipamentoService;
+import xsolution.service.SetorService;
 import xsolution.utils.AlertUtils;
 
 public class ModalEquipamentoController implements Initializable {
@@ -37,14 +36,14 @@ public class ModalEquipamentoController implements Initializable {
     @FXML private DatePicker dpDataAquisicao;
 
     private EquipamentoService service;
-    private SetorDAO setorDAO;
+    private SetorService setorService;
     private Equipamento equipamentoAtual;
     private boolean salvou = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.service = new EquipamentoService();
-        this.setorDAO = new SetorDAOImpl(); 
+        this.setorService = new SetorService();
         
         cbTipo.setItems(FXCollections.observableArrayList(TipoEquipamento.values()));
         cbStatus.setItems(FXCollections.observableArrayList(StatusEquipamento.values()));
@@ -68,7 +67,7 @@ public class ModalEquipamentoController implements Initializable {
         });
 
         try {
-            cbSetor.setItems(FXCollections.observableArrayList(setorDAO.findAll()));
+            cbSetor.setItems(FXCollections.observableArrayList(setorService.listarTodos()));
         } catch (Exception e) {
             AlertUtils.showError("Erro", "Não foi possível carregar a lista de setores: " + e.getMessage());
             e.printStackTrace();
