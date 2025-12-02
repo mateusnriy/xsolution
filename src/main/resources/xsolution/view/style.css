@@ -40,7 +40,7 @@
 
 .button:pressed {
     -fx-background-color: #1d4ed8;
-    -fx-effect: inset;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
 }
 
 .button-danger {

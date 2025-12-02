@@ -189,7 +189,7 @@ public class ChamadoDAOImpl implements ChamadoDAO {
         try (Connection conn = DB.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, chamado.getStatus().toString());
+            pstmt.setString(1, chamado.getStatus().name());
             
             if (chamado.getTecnicoResponsavel() != null) {
                 pstmt.setString(2, chamado.getTecnicoResponsavel().getId());

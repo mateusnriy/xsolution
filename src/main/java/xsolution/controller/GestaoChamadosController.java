@@ -34,25 +34,39 @@ import xsolution.utils.ViewUtils;
 
 public class GestaoChamadosController implements Initializable {
 
-    @FXML private TextField filterProtocolo;
-    @FXML private ComboBox<StatusChamado> filterStatus;
-    @FXML private DatePicker filterDataInicio;
-    @FXML private TableView<Chamado> chamadosTable;
-    @FXML private ProgressIndicator loadingIndicator;
-    @FXML private Button btnFiltrar;
-    @FXML private Button btnLimparFiltros;
-    @FXML private Button btnRelatorio;
-    
-    @FXML private TableColumn<Chamado, String> colProtocolo;
-    @FXML private TableColumn<Chamado, String> colTitulo;
-    @FXML private TableColumn<Chamado, String> colStatus;
-    @FXML private TableColumn<Chamado, String> colSolicitante;
-    @FXML private TableColumn<Chamado, String> colTecnico;
-    @FXML private TableColumn<Chamado, String> colDataAbertura;
+    @FXML
+    private TextField filterProtocolo;
+    @FXML
+    private ComboBox<StatusChamado> filterStatus;
+    @FXML
+    private DatePicker filterDataInicio;
+    @FXML
+    private TableView<Chamado> chamadosTable;
+    @FXML
+    private ProgressIndicator loadingIndicator;
+    @FXML
+    private Button btnFiltrar;
+    @FXML
+    private Button btnLimparFiltros;
+    @FXML
+    private Button btnRelatorio;
+
+    @FXML
+    private TableColumn<Chamado, String> colProtocolo;
+    @FXML
+    private TableColumn<Chamado, String> colTitulo;
+    @FXML
+    private TableColumn<Chamado, String> colStatus;
+    @FXML
+    private TableColumn<Chamado, String> colSolicitante;
+    @FXML
+    private TableColumn<Chamado, String> colTecnico;
+    @FXML
+    private TableColumn<Chamado, String> colDataAbertura;
 
     private ChamadoService chamadoService;
-    private ObservableList<Chamado> listaChamados; 
-    private List<Chamado> todosOsChamadosCache; 
+    private ObservableList<Chamado> listaChamados;
+    private List<Chamado> todosOsChamadosCache;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -74,7 +88,7 @@ public class GestaoChamadosController implements Initializable {
     private void carregarDados() {
         loadingIndicator.setVisible(true);
         chamadosTable.setOpacity(0.5);
-        
+
         Task<List<Chamado>> task = new Task<>() {
             @Override
             protected List<Chamado> call() throws Exception {
@@ -107,7 +121,13 @@ public class GestaoChamadosController implements Initializable {
     private void configurarTabela() {
         colProtocolo.setCellValueFactory(new PropertyValueFactory<>("protocolo"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-        colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
+        
+        colStatus.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getStatus() != null) {
+                return new SimpleStringProperty(cellData.getValue().getStatus().toString());
+            }
+            return new SimpleStringProperty("ERRO / NULO");
+        });
 
         colSolicitante.setCellValueFactory(cellData -> {
             Chamado c = cellData.getValue();
@@ -116,7 +136,8 @@ public class GestaoChamadosController implements Initializable {
 
         colTecnico.setCellValueFactory(cellData -> {
             Chamado c = cellData.getValue();
-            return new SimpleStringProperty(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "Pendente");
+            return new SimpleStringProperty(
+                    c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "Pendente");
         });
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -149,7 +170,8 @@ public class GestaoChamadosController implements Initializable {
                             String proto = c.getProtocolo() != null ? c.getProtocolo().toLowerCase() : "";
                             matchProtocolo = proto.contains(filtro);
                         }
-                        boolean matchStatus = filterStatus.getValue() == null || c.getStatus() == filterStatus.getValue();
+                        boolean matchStatus = filterStatus.getValue() == null
+                                || c.getStatus() == filterStatus.getValue();
                         boolean matchData = true;
                         if (filterDataInicio.getValue() != null && c.getDataAbertura() != null) {
                             matchData = c.getDataAbertura().toLocalDate().equals(filterDataInicio.getValue());
@@ -175,13 +197,12 @@ public class GestaoChamadosController implements Initializable {
     private void handleAbrirDetalhes(Chamado chamadoSelecionado) {
 
         DetalhesChamadoController controller = ViewUtils.abrirModal(
-            "/xsolution/view/ModalChamados.fxml",
-            "Detalhes - " + chamadoSelecionado.getProtocolo(),
-            (detalhesCtrl) -> {
-                detalhesCtrl.setChamado(chamadoSelecionado);
-            },
-            null 
-        );
+                "/xsolution/view/ModalChamados.fxml",
+                "Detalhes - " + chamadoSelecionado.getProtocolo(),
+                (detalhesCtrl) -> {
+                    detalhesCtrl.setChamado(chamadoSelecionado);
+                },
+                null);
 
         if (controller != null && controller.isSalvou()) {
             carregarDados();
@@ -198,19 +219,20 @@ public class GestaoChamadosController implements Initializable {
         File file = fileChooser.showSaveDialog(chamadosTable.getScene().getWindow());
 
         if (file != null) {
-            try (PrintWriter writer = new PrintWriter(file, "UTF-8")) { 
+            try (PrintWriter writer = new PrintWriter(file, "UTF-8")) {
                 StringBuilder sb = new StringBuilder();
-                sb.append('\ufeff'); 
+                sb.append('\ufeff');
                 sb.append("Protocolo;Titulo;Status;Data Abertura;Solicitante;Tecnico\n");
 
                 for (Chamado c : chamadosTable.getItems()) {
                     sb.append(c.getProtocolo()).append(";")
-                      .append(c.getTitulo()).append(";")
-                      .append(c.getStatus()).append(";")
-                      .append(c.getDataAbertura()).append(";")
-                      .append(c.getSolicitante() != null ? c.getSolicitante().getNome() : "N/A").append(";")
-                      .append(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome() : "Pendente")
-                      .append("\n");
+                            .append(c.getTitulo()).append(";")
+                            .append(c.getStatus()).append(";")
+                            .append(c.getDataAbertura()).append(";")
+                            .append(c.getSolicitante() != null ? c.getSolicitante().getNome() : "N/A").append(";")
+                            .append(c.getTecnicoResponsavel() != null ? c.getTecnicoResponsavel().getNome()
+                                    : "Pendente")
+                            .append("\n");
                 }
                 writer.write(sb.toString());
                 AlertUtils.showInfo("Sucesso", "Relatório salvo em: " + file.getAbsolutePath());
