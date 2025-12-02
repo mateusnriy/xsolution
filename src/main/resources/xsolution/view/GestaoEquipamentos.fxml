@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox alignment="TOP_CENTER" spacing="15.0" stylesheets="@style.css" 
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="xsolution.controller.GestaoEquipamentosController">
+   <padding>
+       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <Label styleClass="label-header" text="Gestão de Equipamentos" />
+      
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <TextField fx:id="filterBusca" promptText="Buscar por Patrimônio, Marca..." prefWidth="200.0" />
+            
+            <ComboBox fx:id="filterTipo" promptText="Tipo" prefWidth="120.0" />
+            <ComboBox fx:id="filterStatus" promptText="Status" prefWidth="120.0" />
+
+            <Button text="Filtrar" onAction="#handleFiltrar" styleClass="button" />
+            <Button text="Limpar" onAction="#handleLimparFiltros" styleClass="button-clear" />
+            
+            <Region HBox.hgrow="ALWAYS" />
+            
+            <Button onAction="#handleNovoEquipamento" text="+ Novo Equipamento" styleClass="button" />
+         </children>
+      </HBox>
+
+      <TableView fx:id="tabelaEquipamentos" VBox.vgrow="ALWAYS">
+        <columns>
+           <TableColumn text="Patrimônio" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="numPatrimonio" /></cellValueFactory>
+           </TableColumn>
+           <TableColumn text="Tipo" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="tipo" /></cellValueFactory>
+           </TableColumn>
+           <TableColumn text="Marca" prefWidth="120">
+                <cellValueFactory><PropertyValueFactory property="marca" /></cellValueFactory>
+           </TableColumn>
+           <TableColumn text="Modelo" prefWidth="120">
+                <cellValueFactory><PropertyValueFactory property="modelo" /></cellValueFactory>
+           </TableColumn>
+           <TableColumn text="Status" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="status" /></cellValueFactory>
+           </TableColumn>
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </children>
+</VBox>

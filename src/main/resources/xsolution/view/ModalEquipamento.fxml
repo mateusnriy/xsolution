@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" spacing="15.0" prefWidth="500.0" 
+      styleClass="card" stylesheets="@style.css"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="xsolution.controller.ModalEquipamentoController">
+
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <children>
+        <Label fx:id="lblTitulo" styleClass="label-header" text="Dados do Equipamento" />
+
+        <HBox spacing="15.0">
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Número de Patrimônio *" />
+                <TextField fx:id="txtPatrimonio" promptText="Ex: 123456" />
+            </VBox>
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Número de Série" />
+                <TextField fx:id="txtSerie" promptText="Opcional" />
+            </VBox>
+        </HBox>
+
+        <HBox spacing="15.0">
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Marca *" />
+                <TextField fx:id="txtMarca" />
+            </VBox>
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Modelo *" />
+                <TextField fx:id="txtModelo" />
+            </VBox>
+        </HBox>
+
+        <HBox spacing="15.0">
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Tipo *" />
+                <ComboBox fx:id="cbTipo" maxWidth="Infinity" />
+            </VBox>
+            
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Setor" />
+                <ComboBox fx:id="cbSetor" maxWidth="Infinity" promptText="Selecione o Setor" />
+            </VBox>
+        </HBox>
+
+        <HBox spacing="15.0">
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Status *" />
+                <ComboBox fx:id="cbStatus" maxWidth="Infinity" />
+            </VBox>
+            
+            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                <Label style="-fx-font-weight: bold;" text="Data de Aquisição" />
+                <DatePicker fx:id="dpDataAquisicao" maxWidth="Infinity" />
+            </VBox>
+        </HBox>
+
+        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+            <Button mnemonicParsing="false" onAction="#handleCancelar" styleClass="button-danger" text="Cancelar" />
+            <Button mnemonicParsing="false" onAction="#handleSalvar" styleClass="button" text="Salvar" />
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+        </HBox>
+    </children>
+</VBox>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane styleClass="root" stylesheets="@style.css" 
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+           fx:controller="xsolution.controller.CriarUsuarioController">
+   <children>
+      <VBox alignment="CENTER" maxWidth="400.0" maxHeight="500.0" spacing="15.0" styleClass="card">
+         <children>
+            <Label styleClass="label-subheader" text="Criar Conta">
+               <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+            </Label>
+
+            <VBox alignment="CENTER_LEFT" spacing="5.0">
+                <Label text="Nome Completo" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="nomeField" promptText="Digite seu nome" />
+            </VBox>
+
+            <VBox alignment="CENTER_LEFT" spacing="5.0">
+                <Label text="E-mail" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="emailField" promptText="seu@email.com" />
+            </VBox>
+         
+            <VBox alignment="CENTER_LEFT" spacing="5.0">
+                <Label text="Senha" style="-fx-font-weight: bold;"/>
+                <PasswordField fx:id="senhaField" promptText="Mínimo 8 caracteres" />
+            </VBox>
+
+            <VBox alignment="CENTER_LEFT" spacing="5.0">
+                <Label text="Confirmar Senha" style="-fx-font-weight: bold;"/>
+                <PasswordField fx:id="confirmSenhaField" promptText="Repita a senha" />
+            </VBox>
+
+            <Button fx:id="createButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleCreate" prefHeight="40.0" text="Criar Conta">
+                <VBox.margin><Insets top="10.0"/></VBox.margin>
+            </Button>
+            
+            <Hyperlink fx:id="backToLoginLink" onAction="#handleBack" text="Já possui conta? Voltar ao Login" />
+         </children>
+         <padding>
+            <Insets bottom="30" left="30" right="30" top="30"/>
+         </padding>
+      </VBox>
+   </children>
+</StackPane>

@@ -1,0 +1,25 @@
+# --- Maven e Compilação ---
+target/
+dependency-reduced-pom.xml
+
+# --- IDEs e Editores ---
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+bin/
+
+# --- Sistema Operacional ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- Logs e Outros ---
+*.log
+.github/
+nb-configuration.xml
+
+# --- Credenciais do banco ---
+src/main/resources/db.properties

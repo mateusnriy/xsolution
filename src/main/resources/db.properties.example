@@ -1,0 +1,4 @@
+
+# db.url="jdbc:postgresql://localhost+PORTA+NOME_DO_BANCO"
+# db.user="USER DO SEU BANCO DE DADOS AQUI"
+# db.password="SENHA DO SEU BANCO DE DADOS AQUI"
