@@ -10,15 +10,16 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.xsolution.model.entity.Chamado;
+import com.xsolution.model.entity.Equipamento;
+import com.xsolution.model.entity.Servidor;
+import com.xsolution.model.entity.Tecnico;
+import com.xsolution.model.entity.Usuario;
+import com.xsolution.model.enums.StatusChamado;
+import com.xsolution.model.enums.TipoEquipamento;
+
 import xsolution.db.DB;
 import xsolution.exception.DbException;
-import xsolution.model.entity.Chamado;
-import xsolution.model.entity.Equipamento;
-import xsolution.model.entity.Servidor;
-import xsolution.model.entity.Tecnico;
-import xsolution.model.entity.Usuario;
-import xsolution.model.enums.StatusChamado;
-import xsolution.model.enums.TipoEquipamento;
 
 public class ChamadoDAOImpl implements ChamadoDAO {
 

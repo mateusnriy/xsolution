@@ -8,15 +8,16 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.xsolution.model.entity.Administrador;
+import com.xsolution.model.entity.Servidor;
+import com.xsolution.model.entity.Setor;
+import com.xsolution.model.entity.Tecnico;
+import com.xsolution.model.entity.Usuario;
+import com.xsolution.model.enums.PerfilUsuario;
+import com.xsolution.model.enums.StatusUsuario;
+
 import xsolution.db.DB;
 import xsolution.exception.DbException;
-import xsolution.model.entity.Administrador;
-import xsolution.model.entity.Servidor;
-import xsolution.model.entity.Setor;
-import xsolution.model.entity.Tecnico;
-import xsolution.model.entity.Usuario;
-import xsolution.model.enums.PerfilUsuario;
-import xsolution.model.enums.StatusUsuario;
 
 public class UsuarioDAOImpl implements UsuarioDAO {
 

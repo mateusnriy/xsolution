@@ -3,9 +3,11 @@ package xsolution.dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.xsolution.model.entity.Setor;
+
 import xsolution.db.DB;
 import xsolution.exception.DbException;
-import xsolution.model.entity.Setor;
 
 public class SetorDAOImpl implements SetorDAO {
 

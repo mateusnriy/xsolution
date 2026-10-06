@@ -9,12 +9,13 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.xsolution.model.entity.Equipamento;
+import com.xsolution.model.entity.Setor;
+import com.xsolution.model.enums.StatusEquipamento;
+import com.xsolution.model.enums.TipoEquipamento;
+
 import xsolution.db.DB;
 import xsolution.exception.DbException;
-import xsolution.model.entity.Equipamento;
-import xsolution.model.entity.Setor;
-import xsolution.model.enums.StatusEquipamento;
-import xsolution.model.enums.TipoEquipamento;
 
 public class EquipamentoDAOImpl implements EquipamentoDAO {
 

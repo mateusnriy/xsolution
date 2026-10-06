@@ -1,10 +1,11 @@
 package xsolution.dao;
 
-import xsolution.model.entity.Usuario;
-import xsolution.model.entity.Chamado;
-import xsolution.model.enums.StatusChamado;
 import java.sql.Timestamp;
 import java.util.List;
+
+import com.xsolution.model.entity.Chamado;
+import com.xsolution.model.entity.Usuario;
+import com.xsolution.model.enums.StatusChamado;
 
 public interface ChamadoDAO {
 

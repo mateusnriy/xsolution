@@ -1,7 +1,8 @@
 package xsolution.dao;
 
 import java.util.List;
-import xsolution.model.entity.Equipamento;
+
+import com.xsolution.model.entity.Equipamento;
 
 public interface EquipamentoDAO {
     void salvar(Equipamento equipamento);
