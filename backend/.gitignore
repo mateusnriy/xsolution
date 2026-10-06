@@ -1,21 +1,17 @@
-### Maven ###
-target/
-dependency-reduced-pom.xml
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### VS Code ###
-.vscode/
-.vscode/
-.idea/
-*.iml
+### STS ###
+.apt_generated
 .classpath
+.factorypath
 .project
-.settings/
-bin/
+.settings
+.springBeans
+.sts4-cache
 
 ### IntelliJ IDEA ###
 .idea
@@ -33,28 +29,5 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### Sistema Operacional ###
-.DS_Store
-Thumbs.db
-Desktop.ini
-
-### Logs ###
-*.log
-.github/
-nb-configuration.xml
-
-### Credenciais do banco ###
-src/main/resources/db.properties
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-.gitkeep
-
-
+### VS Code ###
+.vscode/
