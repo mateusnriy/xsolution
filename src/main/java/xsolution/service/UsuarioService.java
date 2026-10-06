@@ -1,8 +1,6 @@
 package xsolution.service;
 
 import java.util.List;
-
-import org.mindrot.jbcrypt.BCrypt;
 import xsolution.dao.SetorDAO;
 import xsolution.dao.SetorDAOImpl;
 import xsolution.dao.UsuarioDAO;
@@ -13,7 +11,6 @@ import xsolution.model.entity.Servidor;
 import xsolution.model.entity.Setor;
 import xsolution.model.entity.Usuario;
 import xsolution.model.enums.StatusUsuario;
-import xsolution.utils.Sessao;
 
 public class UsuarioService {
 

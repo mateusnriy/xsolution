@@ -1,8 +1,14 @@
-# --- Maven e Compilação ---
+### Maven ###
 target/
 dependency-reduced-pom.xml
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# --- IDEs e Editores ---
+### VS Code ###
+.vscode/
 .vscode/
 .idea/
 *.iml
@@ -11,15 +17,44 @@ dependency-reduced-pom.xml
 .settings/
 bin/
 
-# --- Sistema Operacional ---
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Sistema Operacional ###
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# --- Logs e Outros ---
+### Logs ###
 *.log
 .github/
 nb-configuration.xml
 
-# --- Credenciais do banco ---
+### Credenciais do banco ###
 src/main/resources/db.properties
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+
+
+
